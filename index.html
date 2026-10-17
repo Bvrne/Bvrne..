@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="mn" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mobile Legends яаж тоглох вэ?</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-2: #111827;
+      --panel: rgba(15, 23, 42, 0.88);
+      --panel-strong: #1e293b;
+      --panel-soft: #0b1120;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #facc15;
+      --accent-3: #22c55e;
+      --border: rgba(148,163,184,0.2);
+      --shadow: rgba(14, 116, 144, 0.25);
+    }
+
+    body.light {
+      --bg: #f8fafc;
+      --bg-2: #e2e8f0;
+      --panel: rgba(255,255,255,0.94);
+      --panel-strong: #e2e8f0;
+      --panel-soft: #f1f5f9;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0ea5e9;
+      --accent-2: #f59e0b;
+      --accent-3: #16a34a;
+      --border: rgba(15,23,42,0.08);
+      --shadow: rgba(14, 165, 233, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: radial-gradient(circle at top, var(--bg-2), var(--bg) 45%);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    header {
+      text-align: center;
+      padding: 42px 20px 24px;
+      background: linear-gradient(135deg, rgba(30,58,138,0.95), rgba(15,23,42,0.96));
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+    }
+
+    body.light header {
+      background: linear-gradient(135deg, rgba(125,211,252,0.6), rgba(15,23,42,0.9));
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    h1 { color: #7dd3fc; margin: 0 0 10px; font-size: clamp(2rem, 4vw, 2.9rem); }
+    nav { margin-top: 15px; }
+    nav a { color: var(--accent-2); margin: 0 10px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    nav a[aria-current="location"] { color: var(--accent); text-decoration: underline; text-underline-offset: 5px; }
+
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .stats-row {
+      max-width: 960px;
+      margin: 20px auto 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      background: rgba(15,23,42,0.38);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .stat strong { display: block; color: var(--text); font-size: 1rem; margin-top: 2px; }
+
+    section { max-width: 820px; margin: 35px auto; padding: 0 20px; }
+    h2 { color: var(--accent-2); border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 15px;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      animation: fadeIn .4s ease;
+      box-shadow: 0 8px 18px var(--shadow);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px var(--shadow); border-color: rgba(56,189,248,.4); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .card h3 { margin: 0 0 5px; color: var(--accent); }
+    .role { display: inline-block; background: var(--accent-2); color: #0f172a; padding: 2px 10px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-right: 4px; }
+    .stars { color: var(--accent-2); letter-spacing: 1px; }
+    .note { color: var(--muted); font-size: 13px; }
+    .link { color: var(--accent); font-weight: bold; text-decoration: none; }
+    button { background: var(--accent); color: #0f172a; border: none; padding: 10px 16px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin: 4px; transition: filter .2s ease; }
+    button:hover { filter: brightness(1.08); }
+    button:focus-visible, input:focus-visible, select:focus-visible, nav a:focus-visible {
+      outline: 3px solid var(--accent-2);
+      outline-offset: 3px;
+    }
+    .scroll-progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 100;
+      width: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 14px var(--accent);
+      pointer-events: none;
+    }
+    #roleInfo {
+      background: var(--panel);
+      border-left: 4px solid var(--accent-2);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      border: 1px solid var(--border);
+    }
+    #topBtn { position: fixed; right: 20px; bottom: 20px; display: none; z-index: 10; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .glossary-grid .card { margin: 0; padding: 10px 14px; }
+    .skill-panel {
+      margin: 16px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel-soft);
+      padding: 12px 14px;
+    }
+    .skill-panel summary { color: var(--accent); font-weight: 700; cursor: pointer; }
+    .skill-panel ul { padding-left: 20px; }
+    .skill-panel li { margin: 8px 0; }
+    ol li, ul li { margin-bottom: 6px; }
+    footer { text-align: center; padding: 25px; color: var(--muted); }
+
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .meta-table-wrap { overflow-x: auto; border-radius: 14px; }
+    .meta-table { min-width: 880px; }
+
+    .meta-table thead th {
+      color: #cbd5e1;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(15, 23, 42, 0.78);
+      padding: 14px 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      text-align: left;
+    }
+
+    .meta-table tbody tr {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      transition: background 0.2s ease;
+    }
+
+    .meta-table tbody tr:hover {
+      background: rgba(59, 130, 246, 0.06);
+    }
+
+    .meta-rank {
+      width: 56px;
+      font-weight: 700;
+      color: #f8fafc;
+      padding-left: 18px;
+    }
+
+    .meta-rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #111827;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18);
+    }
+
+    .meta-hero {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+      padding: 10px 8px;
+    }
+
+    .meta-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 0.8rem;
+      border: 2px solid rgba(255,255,255,0.35);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #d97706, #f59e0b, #fbcfe8);
+    }
+
+    .meta-avatar.yellow { background: linear-gradient(135deg, #fbbf24, #f59e0b, #fef3c7); }
+    .meta-avatar.blue { background: linear-gradient(135deg, #60a5fa, #2563eb, #dbeafe); }
+    .meta-avatar.green { background: linear-gradient(135deg, #4ade80, #16a34a, #dcfce7); }
+    .meta-avatar.red { background: linear-gradient(135deg, #fda4af, #ef4444, #fecdd3); }
+    .meta-avatar.purple { background: linear-gradient(135deg, #c084fc, #7c3aed, #f3e8ff); }
+    .meta-avatar.gray { background: linear-gradient(135deg, #d1d5db, #64748b, #e2e8f0); }
+    .meta-avatar.orange { background: linear-gradient(135deg, #fdba74, #f97316, #ffedd5); }
+    .meta-avatar.indigo { background: linear-gradient(135deg, #a5b4fc, #4338ca, #e0e7ff); }
+
+    .meta-name {
+      font-size: 1.05rem;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .meta-metric {
+      font-size: 1rem;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      font-weight: 500;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .meta-counter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-width: 310px;
+      padding: 8px;
+    }
+
+    .counter-pick {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 92px;
+      max-width: 120px;
+      padding: 7px 9px;
+      border: 1px solid rgba(148,163,184,0.24);
+      border-radius: 9px;
+      background: rgba(30,41,59,0.85);
+      color: #e2e8f0;
+      text-decoration: none;
+      line-height: 1.25;
+      transition: border-color .2s ease, background .2s ease;
+    }
+
+    .counter-pick:hover,
+    .counter-pick:focus-visible {
+      border-color: var(--accent);
+      background: rgba(51,65,85,0.95);
+      outline: none;
+    }
+
+    .counter-pick strong { font-size: 0.8rem; }
+    .counter-pick small { color: #bfdbfe; font-size: 0.68rem; }
+    .counter-note { color: var(--muted); font-size: 0.72rem; margin-top: 4px; }
+    body.light .counter-pick { background: #f8fafc; color: #0f172a; }
+    body.light .counter-pick small { color: #1d4ed8; }
+
+    .quick-grid {
+      max-width: 1100px;
+      margin: 30px auto 40px;
+      padding: 0 20px;
+    }
+
+    .intro-hero {
+      position: relative;
+      isolation: isolate;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(250px, .72fr);
+      align-items: end;
+      gap: clamp(24px, 4vw, 52px);
+      min-height: 490px;
+      overflow: hidden;
+      padding: clamp(26px, 6vw, 64px);
+      border: 1px solid rgba(251, 191, 36, .28);
+      border-radius: 30px;
+      background: linear-gradient(135deg, #1a1025, #100b1a 68%, #1b1029);
+      box-shadow: 0 28px 80px rgba(10, 8, 22, .48), inset 0 1px rgba(255, 255, 255, .12);
+      animation: introReveal .7s ease both;
+    }
+    .intro-art {
+      position: absolute;
+      z-index: -2;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 38%;
+      animation: introArtReveal 1s ease both;
+    }
+    .intro-hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(10, 7, 20, .96) 0%, rgba(14, 8, 22, .84) 38%, rgba(14, 8, 22, .3) 76%, rgba(14, 8, 22, .18) 100%),
+        linear-gradient(0deg, rgba(10, 7, 20, .8), transparent 66%);
+    }
+    .intro-hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -18%;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(ellipse at 72% 38%, rgba(168, 85, 247, .46), transparent 48%);
+    }
+    .intro-hero.is-obsidia::after { animation: obsidiaAura 3.6s ease-in-out infinite alternate; }
+    .intro-copy { max-width: 620px; color: #f8fafc; }
+    .intro-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 8px 12px;
+      border: 1px solid rgba(253, 164, 175, .28);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, .48);
+      color: #fecdd3;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .intro-kicker::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fb7185; box-shadow: 0 0 12px #fb7185; }
+    .intro-copy h2 {
+      margin: 0 0 18px;
+      border: 0;
+      color: #fff;
+      font-size: clamp(3rem, 7.2vw, 6.2rem);
+      line-height: .98;
+      letter-spacing: -.065em;
+      text-shadow: 0 4px 34px rgba(0, 0, 0, .55);
+    }
+    .intro-copy h2 span {
+      display: block;
+      margin-top: 8px;
+      color: #fda4af;
+      font-size: .48em;
+      font-weight: 700;
+      letter-spacing: -.025em;
+    }
+    .intro-copy p { max-width: 480px; margin: 0; color: #e2e8f0; font-size: clamp(1rem, 1.7vw, 1.12rem); }
+    .intro-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .intro-actions a {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border: 1px solid rgba(255, 255, 255, .55);
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      background: rgba(15, 23, 42, .48);
+      transition: transform .2s ease, background .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .intro-actions a:first-child {
+      border-color: #fb7185;
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      box-shadow: 0 8px 26px rgba(225, 29, 72, .28);
+    }
+    .intro-actions a:hover { transform: translateY(-3px); border-color: #fda4af; background: #be123c; box-shadow: 0 12px 28px rgba(225, 29, 72, .32); }
+    .intro-actions a:focus-visible { outline: 3px solid #fde68a; outline-offset: 3px; }
+    .intro-slide-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      color: #f8fafc;
+      font-size: .88rem;
+    }
+    .intro-slide-controls button {
+      display: inline-grid;
+      min-width: 38px;
+      min-height: 38px;
+      place-items: center;
+      margin: 0;
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, .4);
+      background: rgba(15, 23, 42, .62);
+      color: #fff;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .intro-slide-controls button:hover { transform: translateY(-2px); border-color: #fda4af; background: #be123c; }
+    .intro-art.is-changing { animation: introArtSwap .55s ease both; }
+    @keyframes introArtSwap {
+      0% { opacity: .42; transform: scale(1.025); filter: saturate(.75); }
+      100% { opacity: 1; transform: scale(1); filter: saturate(1); }
+    }
+
+    .spotlight-card {
+      padding: 22px;
+      color: #f8fafc;
+      background: linear-gradient(145deg, rgba(15, 23, 42, .78), rgba(15, 23, 42, .54));
+      border: 1px solid rgba(255, 255, 255, .3);
+      border-radius: 20px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .12);
+      backdrop-filter: blur(16px);
+    }
+
+    .spotlight-card h3 { margin: 0 0 12px; color: #fde68a; font-size: 1rem; letter-spacing: .02em; }
+    .spotlight-card strong { font-size: 1.35rem; color: #fff; }
+    .spotlight-card .button-row { margin-top: 12px; }
+    .hero-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .hero-toolbar .button-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .favorite-button {
+      float: right;
+      min-width: 44px;
+      padding: 7px 10px;
+      background: var(--panel-strong);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .favorite-button.is-favorite { color: #facc15; border-color: #facc15; }
+    .plan-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+    .plan-controls label { flex: 1 1 180px; font-weight: 700; }
+    .plan-controls select {
+      display: block;
+      width: 100%;
+      margin-top: 5px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      color: var(--text);
+      font-size: 1rem;
+    }
+    #planResult {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+    #planResult:empty { display: none; }
+    .patch-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .patch-version {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: .88rem;
+      font-weight: 700;
+    }
+    .patch-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .patch-filters button { margin: 0; }
+    .patch-filters button[aria-pressed="true"] { background: var(--accent-2); }
+    .patch-search {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .patch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .patch-entry {
+      margin: 0;
+      padding: 15px;
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: none;
+    }
+    .patch-entry h3 { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+    .patch-entry p { margin: 8px 0; }
+    .patch-entry .patch-mode { color: var(--accent-2); font-size: .82rem; font-weight: 700; }
+    .patch-kind {
+      display: inline-block;
+      margin: 8px 0 2px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(248, 113, 113, .14);
+      color: #f87171;
+      font-size: .78rem;
+      font-weight: 800;
+    }
+    .patch-kind.buff { background: rgba(34, 197, 94, .14); color: #22c55e; }
+    .patch-kind.adjustment { background: rgba(148, 163, 184, .18); color: var(--text); }
+    .patch-entry time { color: var(--muted); font-size: .82rem; }
+    .patch-entry .patch-change { font-size: .92rem; }
+    .patch-note { margin-top: 14px; }
+    .empty-state { padding: 18px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted); text-align: center; }
+    .tip-card { position: relative; overflow: hidden; }
+    .tip-card::before {
+      content: "✦";
+      position: absolute;
+      right: 20px;
+      top: 0;
+      color: var(--accent-2);
+      font-size: 3rem;
+      opacity: .18;
+    }
+    #tip { max-width: 680px; min-height: 3em; }
+    #tip.tip-change { animation: tipIn .35s ease; }
+    @keyframes tipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 700px) {
+      header { position: relative; padding: 24px 14px 16px; }
+      .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 12px; gap: 8px; }
+      .stat { padding: 8px 10px; }
+      .header-inner { justify-content: center; }
+      nav { margin-top: 8px; }
+      nav a { display: inline-block; margin: 4px 7px; font-size: .92rem; }
+      section { margin: 24px auto; padding: 0 14px; }
+      .plan-controls { align-items: stretch; }
+      .quick-grid { margin: 16px auto 28px; padding: 0 14px; }
+      .intro-hero { grid-template-columns: 1fr; gap: 18px; min-height: 620px; padding: 28px 22px; align-content: end; border-radius: 24px; }
+      .intro-art { object-position: 56% center; }
+      .intro-hero::before {
+        background:
+          linear-gradient(0deg, rgba(10, 7, 20, .96) 0%, rgba(14, 8, 22, .78) 45%, rgba(14, 8, 22, .08) 100%),
+          linear-gradient(90deg, rgba(10, 7, 20, .28), transparent);
+      }
+      .intro-copy h2 { font-size: clamp(3rem, 14vw, 4.6rem); }
+      .intro-actions { margin-top: 22px; }
+      .spotlight-card { max-width: 420px; padding: 18px; }
+    }
+    @keyframes introReveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes introArtReveal { from { transform: scale(1.04); filter: saturate(.8); } to { transform: scale(1); filter: saturate(1); } }
+    @keyframes obsidiaAura { from { opacity: .35; transform: scale(.98); } to { opacity: .85; transform: scale(1.04); } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>Mobile Legends яаж тоглох вэ?</h1>
+        <p>Шинээр тоглож эхэлсэн хүнд зориулсан гарын авлага</p>
+      </div>
+      <button id="themeToggle" class="theme-toggle" aria-label="Өнгөний горим солих">🌙 Харанхуй</button>
+    </div>
+    <nav>
+      <a href="#goal">Зорилго</a>
+      <a href="#map">Газрын зураг</a>
+      <a href="#roles">Баатрын үүрэг</a>
+      <a href="#heroes">Баатрууд</a>
+      <a href="#match-plan">Төлөвлөгөө</a>
+      <a href="#patch-balance">Nerf ба Buff</a>
+      <a href="#glossary">Толь</a>
+      <a href="#tips">Зөвлөгөө</a>
+    </nav>
+    <div class="stats-row">
+      <div class="stat"><span>Үүрэг</span><strong>6 төрөл</strong></div>
+      <div class="stat"><span>Баатар</span><strong>133</strong></div>
+      <div class="stat"><span>Тоглох</span><strong>5v5</strong></div>
+      <div class="stat"><span>Зорилго</span><strong>База</strong></div>
+    </div>
+  </header>
+
+  <section class="quick-grid" aria-label="Тоглоомын танилцуулга">
+    <div class="intro-hero">
+      <img class="intro-art" id="introArt" src="intro-hero.png" alt="Mobile Legends-ийн баатрын зураг" fetchpriority="high">
+      <div class="intro-copy">
+        <span class="intro-kicker" id="introKicker">Mobile Legends · Монгол гарын авлага</span>
+        <h2>Тавтай морил</h2>
+        <p>Баатраа сонго, чадварыг нь судалж, багтаа ялалт авчрах дараагийн алхмаа төлөвлө.</p>
+        <div class="intro-actions">
+          <a href="#heroes">Баатруудтай танилцах</a>
+          <a href="#match-plan">Төлөвлөгөө харах</a>
+        </div>
+        <div class="intro-slide-controls" role="group" aria-label="Танилцуулгын зургийг солих">
+          <button type="button" onclick="showSpotlight(-1)" aria-label="Өмнөх зураг">‹</button>
+          <span id="introSlideStatus" aria-live="polite">1 / 4</span>
+          <button type="button" onclick="showSpotlight(1)" aria-label="Дараагийн зураг">›</button>
+          <button type="button" id="introRotationToggle" onclick="toggleSpotlightRotation()" aria-label="Автомат сэлгэлтийг түр зогсоох">Ⅱ</button>
+        </div>
+      </div>
+      <div class="spotlight-card">
+        <h3>✨ Онцлох баатар</h3>
+        <div id="heroSpotlight">Ачаалж байна...</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="goal">
+    <h2>1. Тоглоомын зорилго</h2>
+    <div class="card">
+      <p>Mobile Legends бол хоёр баг тус бүр таван тоглогчтойгоор өрсөлддөг тоглоом. <b>Дайсны гол баазыг устгасан баг</b> ялна.</p>
+      <p>Жижиг цэргүүд, цамхаг болон ширэнгийн мангасуудыг устгаж алт, туршлага цуглуул. Алтаараа хэрэгтэй зүйлс худалдан авч баатраа хүчирхэгжүүлээрэй.</p>
+    </div>
+  </section>
+
+  <section id="map">
+    <h2>2. Газрын зураг, lane-үүд</h2>
+    <div class="card">
+      <h3>3 зам (lane)</h3>
+      <ul>
+        <li><b>Gold lane (алтны зам):</b> ихэвчлэн холоос довтлогч баатар тоглож, туслагч нь хамт явдаг.</li>
+        <li><b>Mid lane (дунд зам):</b> голдуу шидтэн тоглож, бусад замд туслахад тохиромжтой.</li>
+        <li><b>EXP lane (туршлагын зам):</b> ихэвчлэн тулаанч эсвэл хамгаалагч ганцаараа тоглодог.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Ширэнгэ</h3>
+      <p>Замуудын хооронд мангасууд бий. Ширэнгийн үүрэгтэй тоглогч тэднийг устгаж алт, туршлага цуглуулаад, боломж гарвал замын тоглогчдод тусална.</p>
+    </div>
+    <div class="card">
+      <h3>Том мангасууд</h3>
+      <p>Газрын зурагт Turtle, Lord хэмээх том мангасууд бий. Тэднийг ялбал багт давуу тал олдоно. Боломжтой үед багтайгаа хамт очиж тулалдаарай.</p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <h2>3. Баатруудын role</h2>
+    <p>Товч дээр дарж баатрын үүрэг бүрийн тайлбарыг уншаарай:</p>
+    <div>
+      <button onclick="showRole('Tank')">Tank</button>
+      <button onclick="showRole('Fighter')">Fighter</button>
+      <button onclick="showRole('Assassin')">Assassin</button>
+      <button onclick="showRole('Mage')">Mage</button>
+      <button onclick="showRole('Marksman')">Marksman</button>
+      <button onclick="showRole('Support')">Support</button>
+    </div>
+    <div id="roleInfo">Дээрх товчнуудаас нэгийг дарна уу.</div>
+  </section>
+
+  <section id="heroes">
+    <h2>4. Баатрууд</h2>
+    <input id="heroSearch" type="text" placeholder="Баатрын нэрээр хайх..." oninput="filterHeroes(currentRole)"
+           style="width:100%; padding:10px; border-radius:8px; border:none; font-size:16px; margin-bottom:10px; box-sizing:border-box;">
+    <div class="hero-toolbar">
+      <span id="favoritesCount" class="note" aria-live="polite"></span>
+      <div class="button-row">
+        <button type="button" onclick="showRandomHero()">🎲 Санамсаргүй баатар</button>
+        <button type="button" onclick="filterHeroes('favorites')">⭐ Дуртай баатрууд</button>
+      </div>
+    </div>
+    <div>
+      <button onclick="filterHeroes('meta')">🔥 Мета баатрууд</button>
+      <button onclick="filterHeroes('all')">Бүгд</button>
+      <button onclick="filterHeroes('Tank')">Tank</button>
+      <button onclick="filterHeroes('Fighter')">Fighter</button>
+      <button onclick="filterHeroes('Assassin')">Assassin</button>
+      <button onclick="filterHeroes('Mage')">Mage</button>
+      <button onclick="filterHeroes('Marksman')">Marksman</button>
+      <button onclick="filterHeroes('Support')">Support</button>
+    </div>
+    <p id="heroCount" class="note"></p>
+    <div id="heroList"></div>
+  </section>
+
+  <section id="basics">
+    <h2>5. Эхлэн суралцагчийн алхмууд</h2>
+    <ol>
+      <li>Өөрт тохирох, тоглоход хялбар баатраас эхэл.</li>
+      <li>Дэлгэцийн зүүн талын удирдлагаар хөдөлж, баруун талын товчоор чадвараа ашигла.</li>
+      <li>Жижиг цэргүүдийг сүүлчийн цохилтоор устгаж нэмэлт алт аваарай.</li>
+      <li>Багтайгаа хамт яв; дайсны нутагт ганцаараа бүү ор.</li>
+      <li>Алтаараа дэлгүүрээс баатарт тохирох зүйлс худалдаж ав.</li>
+      <li>Жижиг газрын зургийг байнга харж, дайснуудын байрлалыг ажигла.</li>
+    </ol>
+  </section>
+
+  <section id="match-plan">
+    <h2>6. Тоглолтын төлөвлөгөө</h2>
+    <div class="card">
+      <p>Үүрэг болон тоглолтын үеэ сонгоод яг одоо юунд анхаарахаа хараарай.</p>
+      <div class="plan-controls">
+        <label for="planRole">Таны үүрэг
+          <select id="planRole">
+            <option value="Tank">Tank — хамгаалагч</option>
+            <option value="Fighter">Fighter — тулаанч</option>
+            <option value="Assassin">Assassin — алуурчин</option>
+            <option value="Mage">Mage — илбэчин</option>
+            <option value="Marksman">Marksman — харваач</option>
+            <option value="Support">Support — дэмжигч</option>
+          </select>
+        </label>
+        <label for="planPhase">Тоглолтын үе
+          <select id="planPhase">
+            <option value="early">Эхлэл</option>
+            <option value="mid">Дунд үе</option>
+            <option value="late">Төгсгөл</option>
+          </select>
+        </label>
+        <button type="button" onclick="buildMatchPlan()">Төлөвлөгөө гаргах</button>
+      </div>
+      <div id="planResult" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="patch-balance">
+    <h2>7. Nerf ба Buff</h2>
+    <div class="card">
+      <div class="patch-summary">
+        <span class="patch-version">Patch 2.2.16</span>
+        <time datetime="2026-09-16">Огноо: 2026.09.16</time>
+      </div>
+      <p>Өөрчлөлт бүрийг Nerf, Buff эсвэл холимог өөрчлөлтийн хэсэг болгон тусад нь үзүүлэв. Нэг баатар Nerf болон Buff-ийг зэрэг авсан байж болно; тэмдэг нь тухайн өөрчлөлтийг хэлэхээс баатрыг бүхэлд нь үнэлээгүй. Горимын тусгай өөрчлөлт үндсэн тоглолтод хамаарахгүй.</p>
+      <div class="patch-filters" role="group" aria-label="Nerf эсвэл Buff-аар шүүх">
+        <button type="button" data-patch-type="all" aria-pressed="true">Nerf ба Buff</button>
+        <button type="button" data-patch-type="nerf" aria-pressed="false">Nerf</button>
+        <button type="button" data-patch-type="buff" aria-pressed="false">Buff</button>
+        <button type="button" data-patch-type="adjustment" aria-pressed="false">Холимог өөрчлөлт</button>
+      </div>
+      <div class="patch-filters" role="group" aria-label="Patch өөрчлөлтийг горимоор шүүх">
+        <button type="button" data-patch-filter="all" aria-pressed="true">Бүгд</button>
+        <button type="button" data-patch-filter="main" aria-pressed="false">Үндсэн тоглолт</button>
+        <button type="button" data-patch-filter="brawl" aria-pressed="false">Brawl</button>
+        <button type="button" data-patch-filter="classic" aria-pressed="false">Classic</button>
+        <button type="button" data-patch-filter="honor" aria-pressed="false">Mythical Honor</button>
+      </div>
+      <input id="patchSearch" class="patch-search" type="search" placeholder="Баатар эсвэл өөрчлөлтөөр хайх..." aria-label="Patch-ийн баатар болон өөрчлөлт хайх">
+      <p id="patchCount" class="note" aria-live="polite"></p>
+      <div id="patchBalanceList" class="patch-grid"></div>
+      <p class="note patch-note">Эх сурвалж: Moonton-ийн албан ёсны Patch 2.2.16 тэмдэглэл (2026.09.16). Монгол хэлээр товчилсон. Nerf болон Buff-ийг patch-ийн тэмдэглэгээ, горимын хүрээнд ялгав. Шинэ patch гармагц жагсаалтыг шинэчлэх шаардлагатай.</p>
+    </div>
+  </section>
+
+  <section id="glossary">
+    <h2>8. Нэр томьёоны толь</h2>
+    <input id="termSearch" type="text" placeholder="Нэр томьёо хайх..." oninput="renderGlossary()"
+           style="width:100%; padding:10px; border-radius:8px; border:none; font-size:16px; margin-bottom:10px; box-sizing:border-box;">
+    <div id="glossaryList" class="glossary-grid"></div>
+  </section>
+
+  <section id="tips">
+    <h2>9. Зөвлөгөө</h2>
+    <div class="card tip-card">
+      <button onclick="showTip()">Зөвлөгөө өгөөч</button>
+      <p id="tip" aria-live="polite" style="margin-top:15px; color:#facc15; font-size:18px;"></p>
+      <p class="note">Зөвлөгөө 12 секунд тутамд өөрөө солигдоно.</p>
+    </div>
+  </section>
+
+  <footer>Миний анхны website · Mobile Legends гарын авлага 🎮<br>
+    <span class="note">Мета болон эсрэг баатрын зөвлөмж ерөнхий бөгөөд тоглоомын шинэчлэлт, багийн бүрэлдэхүүнээс хамааран өөрчлөгдөж болно.</span>
+  </footer>
+
+  <button id="topBtn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">⬆ Дээш</button>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+
+    function applyTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light", isLight);
+      if (themeToggle) {
+        themeToggle.textContent = isLight ? "🌙 Харанхуй" : "☀️ Цайвар";
+      }
+      localStorage.setItem("ml-theme", theme);
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        const nextTheme = document.body.classList.contains("light") ? "dark" : "light";
+        applyTheme(nextTheme);
+      });
+    }
+
+    applyTheme(localStorage.getItem("ml-theme") || "light");
+
+    const heroSpotlight = document.getElementById("heroSpotlight");
+    const introArt = document.getElementById("introArt");
+    const introSlides = [
+      { image: "intro-hero.png" },
+      { image: "layla-intro.png" },
+      { image: "cici-intro.png" },
+      { image: "obsidia-intro.jpg" }
+    ];
+    let spotlightIndex = 0;
+    let spotlightRotationPaused = false;
+    let lastSpotlightHero = "";
+    function renderSpotlight() {
+      if (!heroSpotlight || !introArt) return;
+      const slide = introSlides[spotlightIndex];
+      const availableHeroes = heroes.filter(hero => hero.name !== lastSpotlightHero);
+      const hero = availableHeroes[Math.floor(Math.random() * availableHeroes.length)] || heroes[0];
+      if (!hero) {
+        console.error("Онцлох баатар сонгох боломжгүй байна.");
+        return;
+      }
+      lastSpotlightHero = hero.name;
+      introArt.classList.remove("is-changing");
+      void introArt.offsetWidth;
+      introArt.src = slide.image;
+      introArt.closest(".intro-hero").classList.toggle("is-obsidia", slide.image === "obsidia-intro.jpg");
+      introArt.alt = "Mobile Legends-ийн баатрын зураг";
+      introArt.classList.add("is-changing");
+      document.getElementById("introKicker").textContent = "Mobile Legends · Монгол гарын авлага";
+      document.getElementById("introSlideStatus").textContent = `${spotlightIndex + 1} / ${introSlides.length}`;
+      heroSpotlight.innerHTML = `
+        <strong>${hero.name}</strong><br>
+        ${hero.roles.map(r => `<span class="role">${r}</span>`).join("")}<br>
+        <span class="note">Үүрэгт нь тохируулан тоглоорой.</span>
+        <div class="button-row"><button type="button" onclick="showHero('${hero.name}')">Баатрыг үзэх</button></div>
+      `;
+    }
+    function showSpotlight(direction) {
+      spotlightIndex = (spotlightIndex + direction + introSlides.length) % introSlides.length;
+      renderSpotlight();
+    }
+    function updateSpotlight() {
+      if (!document.hidden && !spotlightRotationPaused) showSpotlight(1);
+    }
+    function toggleSpotlightRotation() {
+      spotlightRotationPaused = !spotlightRotationPaused;
+      const button = document.getElementById("introRotationToggle");
+      button.textContent = spotlightRotationPaused ? "▶" : "Ⅱ";
+      button.setAttribute("aria-label", spotlightRotationPaused
+        ? "Автомат сэлгэлтийг үргэлжлүүлэх"
+        : "Автомат сэлгэлтийг түр зогсоох");
+    }
+    introArt.addEventListener("error", () => {
+      console.error("Intro зургийг ачаалж чадсангүй:", introSlides[spotlightIndex].image);
+    });
+
+    // ===== Role тайлбар =====
+    const roleText = {
+      Tank: "Багийн урд явж дайсны довтолгоог тосон, хамтрагчдаа хамгаалдаг.",
+      Fighter: "Ойрын тулаанд хүчтэй, довтолгоо ба хамгаалалт нь тэнцвэртэй. Ихэвчлэн туршлагын замд тоглодог.",
+      Assassin: "Хурдан хөдөлж, дайсны эмзэг баатрыг гэнэдүүлэн богино хугацаанд устгадаг. Гэвч өөрөө амархан ялагдаж болзошгүй.",
+      Mage: "Ид шидийн чадвараар их хэмжээний хохирол учруулдаг ч хамгаалалт сул.",
+      Marksman: "Алт, хэрэгслээ цуглуулсны дараа холоос тогтмол их хохирол учруулдаг.",
+      Support: "Эмчлэх, хамгаалах болон дайсныг саатуулах чадвараараа багтаа тусалдаг."
+    };
+    function showRole(name) {
+      const box = document.getElementById("roleInfo");
+      box.innerHTML = "<b>" + name + ":</b> " + roleText[name];
+    }
+
+    // ===== Яаж тоглох (role-оор) =====
+    const howToRole = {
+      Tank: "Багийнхаа урд явж дайсны довтолгоог тосон, арын эгнээгээ хамгаал.",
+      Fighter: "Ойрын тулаанд тохиромжтой мөчийг хүлээж, дайсны эмзэг баатрыг онил.",
+      Assassin: "Ганцаар яваа эсвэл хамгаалалт сул дайсныг гэнэдүүлэн довтлоод аюулгүй газар буц.",
+      Mage: "Холоос чадвараа ашиглан хохирол учруулж, дайсанд хэт ойртохоос зайлсхий.",
+      Marksman: "Багийнхаа ард байрлаж холоос довтол. Эхлээд алт цуглуулж, хэрэгслээ бүрдүүл.",
+      Support: "Багийнхаа баатруудыг эмчилж, хамгаалан, дайсныг саатуулахад тусал."
+    };
+
+    // ===== Төрлийн шошго =====
+    // s=эрүүл мэнд бага  t=тэсвэр сайтай  e=эхэнд сул, хожим хүчтэй  d=гэнэт довтлогч
+    // r=хол зайнаас цохино  h=эмчилгээ/тэсвэр  m=хурдан хөдөлнө  c=хяналтын чадвартай (stun, slow)
+    const lateByTag = {
+      e: "Тоглолтын эхэнд сул байж болох ч хэрэгслээ бүрдүүлсний дараа хүчтэй болно.",
+      d: "Дайсны сул баатрыг гэнэт довтолж устгах нь гол үүрэг.",
+      t: "Баг тулааныг эхлүүлж, багийнхаа хохирол учруулагчдыг хамгаална.",
+      r: "Хол зайнаас баг тулаанд тасралтгүй хохирол учруулна.",
+      h: "Эмчилгээ, тэсвэрээрээ урт тулаанд давуу байдаг.",
+      m: "Хурдан хөдөлж, тулааны байрлалаа амархан сольдог.",
+      c: "Саатуулах чадвараараа дайсныг тогтоож, багтаа довтлох боломж гаргана."
+    };
+    const dangerByTag = {
+      s: "Эрүүл мэнд бага тул баригдвал хурдан үхнэ.",
+      e: "Тоглолтын эхэнд сул байж болох тул хэрэгслээ бүрдүүлэх хүртэл эрсдэлтэй тулаанаас зайлсхий.",
+      d: "Довтолсны дараа зугтах замаа бодохгүй бол ганцаараа баригдана.",
+      t: "Хохирол нь бага тул багийнхаа хохирол учруулагчтай хамт тогло.",
+      r: "Дайсанд ойртуулбал хамгаалалт сул тул багийнхаа ард байх хэрэгтэй."
+    };
+    const lateFallback = {
+      Tank: "Багийн тулаанд урд эгнээнд байж, хамтрагчдаа хамгаална.",
+      Fighter: "Хэрэгслээ бүрдүүлсний дараа довтолгоо, тэсвэрээрээ давуу болно.",
+      Assassin: "Дайсны хамгаалалт сул баатрыг гэнэдүүлэн устгах нь гол үүрэг.",
+      Mage: "Холоос чадвараа ашиглан багийн тулаанд их хохирол учруулна.",
+      Marksman: "Хэрэгслээ бүрдүүлсний дараа багийн гол хохирол учруулагч болдог.",
+      Support: "Эмчилгээ, хамгаалалт болон саатуулах чадвараараа багаа дэмжинэ."
+    };
+    const dangerFallback = {
+      Tank: "Баггүйгээр дайсны дунд орвол олноороо дайруулж болзошгүй.",
+      Fighter: "Дайсны саатуулах чадварт өртвөл хурдан ялагдаж болзошгүй.",
+      Assassin: "Дайсанд баригдвал хамгаалалт багатай учир амархан ялагдана.",
+      Mage: "Хамгаалалт сул тул дайсан ойртвол амархан ялагдаж болзошгүй.",
+      Marksman: "Хамгаалалт сул тул дайсанд ойртуулалгүй багийнхаа ард байрла.",
+      Support: "Дайсан туслагчийг түрүүлж онилж болзошгүй тул ганцаараа явж болохгүй."
+    };
+
+    // ===== Бүх 133 баатар: "Нэр|Role,Role|tags" =====
+    const heroList = [
+      "Aamon|Assassin|sd","Akai|Tank|tc","Aldous|Fighter|e","Alice|Tank,Mage|th","Alpha|Fighter|h",
+      "Alucard|Fighter,Assassin|dh","Angela|Support|sh","Argus|Fighter|h","Arlott|Fighter,Assassin|d","Atlas|Tank|tc",
+      "Aulus|Fighter|e","Aurora|Mage|sr","Badang|Fighter|c","Balmond|Fighter|h","Bane|Fighter,Mage|r",
+      "Barats|Tank,Fighter|th","Baxia|Tank|t","Beatrix|Marksman|sre","Belerick|Tank|t","Benedetta|Assassin,Fighter|dm",
+      "Brody|Marksman|sr","Bruno|Marksman|sre","Carmilla|Support,Tank|tc","Cecilion|Mage|sre","Chang'e|Mage|sre",
+      "Chip|Support,Tank|tc","Chou|Fighter|dmc","Cici|Fighter|h","Claude|Marksman|sm","Clint|Marksman|sre",
+      "Cyclops|Mage|sr","Diggie|Support|sh","Dyrroth|Fighter|e","Edith|Tank,Marksman|t","Esmeralda|Tank,Mage|th",
+      "Estes|Support|sh","Eudora|Mage|sr","Fanny|Assassin|sdm","Faramis|Support,Mage|sh","Floryn|Support|sh",
+      "Franco|Tank|tc","Fredrinn|Fighter,Tank|th","Freya|Fighter|d","Gatotkaca|Tank,Fighter|tc","Gloo|Tank|t",
+      "Gord|Mage|sr","Granger|Marksman|sd","Grock|Tank,Fighter|tc","Guinevere|Fighter|dc","Gusion|Assassin|sdm",
+      "Hanabi|Marksman|sre","Hanzo|Assassin|sd","Harith|Mage|sm","Harley|Assassin,Mage|sdm","Hayabusa|Assassin|sdm",
+      "Helcurt|Assassin|sd","Hilda|Fighter,Tank|th","Hirara|Assassin|sd","Hylos|Tank|th","Irithel|Marksman|sre",
+      "Ixia|Marksman|sre","Jawhead|Fighter|c","Johnson|Tank,Support|tc","Joy|Assassin|sm","Julian|Assassin,Fighter|d",
+      "Kadita|Mage,Assassin|sd","Kagura|Mage|sr","Kaja|Support|sc","Kalea|Support,Fighter|h","Karina|Assassin|sd",
+      "Karrie|Marksman|sre","Khaleed|Fighter|m","Khufra|Tank|tc","Kimmy|Marksman,Mage|sr","Lancelot|Assassin|sdm",
+      "Lapu-Lapu|Fighter|h","Layla|Marksman|sre","Leomord|Fighter|dm","Lesley|Marksman,Assassin|sr","Ling|Assassin|sdm",
+      "Lolita|Support,Tank|t","Lukas|Fighter|h","Lunox|Mage|sr","Luo Yi|Mage|sr","Lylia|Mage|sr",
+      "Marcel|Support|sc","Martis|Fighter|c","Masha|Fighter,Tank|th","Mathilda|Support,Assassin|sm","Melissa|Marksman|sre",
+      "Minotaur|Tank,Support|tc","Minsitthar|Fighter|h","Miya|Marksman|sre","Moskov|Marksman|sre","Nana|Mage|sc",
+      "Natalia|Assassin|sd","Natan|Marksman|sre","Nolan|Assassin|sd","Novaria|Mage|sr","Obsidia|Marksman|sr",
+      "Odette|Mage|sr","Paquito|Fighter,Assassin|dh","Pharsa|Mage|sr","Phoveus|Fighter|dm","Popol and Kupa|Marksman|sre",
+      "Rafaela|Support|sh","Roger|Fighter,Marksman|dm","Ruby|Fighter|hc","Saber|Assassin|sd","Selena|Assassin,Mage|sdm",
+      "Silvanna|Fighter|d","Sora|Fighter,Assassin|d","Sun|Fighter|h","Suyou|Assassin,Fighter|d","Terizla|Fighter,Tank|th",
+      "Thamuz|Fighter|h","Tigreal|Tank|tc","Uranus|Tank|th","Vale|Mage|sr","Valentina|Mage|sr",
+      "Valir|Mage|sr","Vexana|Mage|sr","Wanwan|Marksman|sm","X.Borg|Fighter|h","Xavier|Mage|sr",
+      "Yi Sun-shin|Assassin,Marksman|sr","Yin|Fighter,Assassin|dh","Yu Zhong|Fighter|h","Yve|Mage|sr","Zetian|Mage|sr",
+      "Zhask|Mage|sre","Zhuxin|Mage|sr","Zilong|Fighter,Assassin|dm"
+    ];
+
+    // ===== Screenshot-style top meta =====
+    const metaTier = {
+      "Masha": 1, "Marcel": 2, "Argus": 3, "Rafaela": 4, "Khufra": 5,
+      "Gloo": 6, "Popol and Kupa": 7, "Silvanna": 8, "Saber": 9, "Aamon": 10
+    };
+
+    const metaStats = {
+      "Masha": {
+        pick: "0.56%", win: "60.66%", ban: "33.41%",
+        counters: [
+          { name: "Karrie", use: "Багийн тулаанд зайгаа барьж, тасралтгүй цохилтоор нь дарах." },
+          { name: "Valir", use: "Түлхэх чадвараар нь ойртохыг тасалж, багийн ард зогс." },
+          { name: "Baxia", use: "Удаашруулж, багтайгаа нийлэн урт тулаанд барих." }
+        ]
+      },
+      "Marcel": {
+        pick: "0.28%", win: "58.33%", ban: "33.44%",
+        counters: [
+          { name: "Diggie", use: "Багийн CC цэвэрлэх чадвараа Marcel-ийн эхлүүлэлтэд хадгал." },
+          { name: "Kaja", use: "Багийнхаа damage dealer-тэй нийлж Marcel-ийг барь." },
+          { name: "Franco", use: "Hook болон suppression-оор нь багийн тулааныг эхлүүлэхээс сэргийл." }
+        ]
+      },
+      "Argus": {
+        pick: "0.49%", win: "56.31%", ban: "1.07%",
+        counters: [
+          { name: "Franco", use: "Argus-ийн ultimate дууссаны дараа hook, suppression ашигла." },
+          { name: "Kaja", use: "Ultimate дуусахад нь suppression хийж багтайгаа буулга." },
+          { name: "Valir", use: "Түлхэх чадвараар нь ойр тулаанд оруулахгүй барь." }
+        ]
+      },
+      "Rafaela": {
+        pick: "1.14%", win: "55.11%", ban: "18.96%",
+        counters: [
+          { name: "Saber", use: "Багийн тулаанд арын эгнээнд байгаа Rafaela-г онил." },
+          { name: "Natalia", use: "Нууцаар тойрч, Rafaela-г багийнхаас нь салангид үед барь." },
+          { name: "Eudora", use: "Чадваруудаа нэг дор ашиглан хурдан burst хий." }
+        ]
+      },
+      "Khufra": {
+        pick: "0.33%", win: "54.77%", ban: "1.89%",
+        counters: [
+          { name: "Diggie", use: "Багийн CC цэвэрлэх чадвараа Khufra-ийн эхлүүлэлтэд ашигла." },
+          { name: "Valir", use: "Түлхэж, багийн чинь арын эгнээнд хүрэхийг нь саатуул." },
+          { name: "Karrie", use: "Хамгаалалтад нь бүү үр; аюулгүй зайнаас тогтвортой damage өг." }
+        ]
+      },
+      "Gloo": {
+        pick: "0.73%", win: "54.69%", ban: "38.57%",
+        counters: [
+          { name: "Valir", use: "Түлхэх чадвараар нь ойртох, багт наалдахыг нь тасал." },
+          { name: "Lunox", use: "Зайгаа барьж, чадвараар нь тогтвортой magic damage өг." },
+          { name: "Karrie", use: "Багтайгаа төвлөрч, аюулгүй зайнаас тасралтгүй цохь." }
+        ]
+      },
+      "Popol and Kupa": {
+        pick: "0.43%", win: "54.65%", ban: "0.30%",
+        counters: [
+          { name: "Lolita", use: "Бамбайгаа Popol-ийн сум болон Kupa-ийн дайралтад чиглүүл." },
+          { name: "Natalia", use: "Хажуугаар нь тойрч, ганцаараа үлдсэн Popol-ийг онил." },
+          { name: "Hayabusa", use: "Багийн тулаанд арын эгнээнд нь хүрч, Popol-ийг шах." }
+        ]
+      },
+      "Silvanna": {
+        pick: "0.21%", win: "54.15%", ban: "0.61%",
+        counters: [
+          { name: "Diggie", use: "Silvanna-ийн барих чадварт багийн CC цэвэрлэх чадвараа ашигла." },
+          { name: "Valir", use: "Түлхэж, ultimate-тай нь ойр тулаанд тогтохоос зайлсхий." },
+          { name: "Kaja", use: "Багтаа аюул учруулахын өмнө барьж, тусгаарла." }
+        ]
+      },
+      "Saber": {
+        pick: "0.18%", win: "53.91%", ban: "0.44%",
+        counters: [
+          { name: "Diggie", use: "Saber онилсон үед багийн CC цэвэрлэх чадвараа цагт нь хэрэглэ." },
+          { name: "Lolita", use: "Бамбайгаар нь багийнхаа Marksman-ыг хамгаал." },
+          { name: "Franco", use: "Saber ойртож ороход нь hook эсвэл suppression-оор зогсоо." }
+        ]
+      },
+      "Aamon": {
+        pick: "0.12%", win: "53.55%", ban: "0.26%",
+        counters: [
+          { name: "Saber", use: "Aamon ил гарч ирэхэд ultimate-аар нь хурдан онил." },
+          { name: "Kaja", use: "Багтайгаа нийлж барих; ганцаараа хөөж бүү ор." },
+          { name: "Eudora", use: "Aamon ил гарсан мөчид burst чадваруудаа нэг дор ашигла." }
+        ]
+      }
+    };
+
+    // ===== Өөрийн нарийвчилсан тайлбар (заавал биш) =====
+    // Тоглоом доторх баатрын хуудаснаас хараад өөрийн үгээр бич.
+    // hp (1-5) болон stages [эхэн, дунд, төгсгөл] (тус бүр 1-5) нэмж ерөнхий үнэлгээг засаж болно.
+    const heroDetails = {
+      "Layla": {
+        skills: [
+          { name: "Malefic Gun (идэвхгүй)", desc: "Зорьсон дайсан хол байх тусам энгийн довтолгоо нь илүү хүчтэй тусна." },
+          { name: "Malefic Bomb (1-р чадвар)", desc: "Чиглэлд бөмбөг харваж, оновол дараагийн довтолгоогоо илүү холоос хийх боломж бүрдүүлнэ." },
+          { name: "Void Projectile (2-р чадвар)", desc: "Бөмбөлөг энергиэр дайсныг цохиж, тэмдэг тавина. Тэмдэгтэй дайсан руу дахин довтлох нь түүнийг түр саатуулна." },
+          { name: "Destruction Rush (онцгой чадвар)", desc: "Урт шулуун зайд хүчтэй энерги харвана; сайжруулах бүрд довтолгооны хүрээ нь нэмэгдэнэ." }
+        ],
+        howTo: "Эхэнд хэт урагш бүү ор, алт цуглуулахад анхаар. Дайснаас хол байж цохивол хамгийн их хохирол учруулна.",
+        late: "Item-ууд бүрдсэн үед маш хүчтэй болж, хол зайнаас дайснуудыг хурдан устгана.",
+        danger: "Удаан хөдөлдөг, зугтах чадваргүй, эрүүл мэнд бага. Assassin ойртвол хурдан үхнэ, тиймээс багийнхаа ард байж, ойр орж ирсэн дайсанд үргэлж бэлэн бай."
+      },
+      "Marcel": {
+        skills: [
+          { name: "Platinum Snap (идэвхгүй)", desc: "Зураг авах мөчөө тааруулан үндсэн довтолгоогоо хүчирхэгжүүлдэг." },
+          { name: "Framed Moment (1-р чадвар)", desc: "Талбай сонгож, дотор нь байгаа дайснуудыг удаашруулаад дараа нь цохилт өгнө." },
+          { name: "Tracking Shot (2-р чадвар)", desc: "Хурд нэмэн дайсныг чиглэн хөдөлж, дахин ашиглахад байршлаа хурдан сольдог." },
+          { name: "Golden Hour (онцгой чадвар)", desc: "Том талбайд зураг авах мөч үүсгэж, доторх дайснуудын хөдөлгөөнийг түр зогсооно." }
+        ],
+        howTo: "Багийн довтолгоог эхлүүлэхэд тусалж, дайсныг түр саатуулах чадвараа ашигла. Замуудаар явж багийнхандаа дэмжлэг үзүүл.",
+        late: "Багийн тулаанд дайсны гол баатрыг түр саатуулж, хамтрагчдадаа довтлох боломж гаргана.",
+        danger: "Хамгаалалт сул тул чадвараа тохиромжтой үед ашиглаж, ганцаараа бүү яв."
+      },
+      "Hirara": {
+        howTo: "Ширэнгийн мангасуудыг устгаж хүчээ ахиулаад, дараа нь дайсны эмзэг баатрыг гэнэдүүлэн довтол.",
+        late: "Дайсны арын эгнээнд буй шидтэн, холын зайн довтлогчийг онилох нь гол үүрэг.",
+        danger: "Assassin учраас баригдвал хурдан үхнэ. Довтолсныхоо дараа зугтах замаа бод."
+      },
+      "Rafaela": {
+        skills: [
+          { name: "Divine Resurrection (идэвхгүй)", desc: "Тодорхой хугацааны дараа саад болох дайралтад өртөөгүй бол ойр байгаа унасан хамтрагчийг буцаан босгох боломжтой." },
+          { name: "Light of Retribution (1-р чадвар)", desc: "Ойр байгаа хэд хэдэн дайсанд гэрлийн цохилт өгч, байрлалыг нь илрүүлэн удаашруулна." },
+          { name: "Holy Healing (2-р чадвар)", desc: "Ойр байгаа хамтрагчдаа эдгээж, хөдөлгөөнийг нь түр нэмэгдүүлнэ." },
+          { name: "Holy Baptism (онцгой чадвар)", desc: "Урагш чиглэсэн гэрлийн долгионоор дайснуудад цохилт өгч, түр хөдөлгөөнгүй болгоно." }
+        ],
+        howTo: "Багийнхаа дунд байж эмчилгээний чадвараа ашигла. Дайсныг удаашруулах чадвараараа дайсныг барьж, багийнхандаа цохих боломж олго.",
+        late: "Ultimate-аараа баг тулаанд дайсныг түр барьж, багийнхныг эмчилнэ.",
+        danger: "Эрүүл мэнд бага тул дайсан ойртвол амархан ялагдаж болзошгүй. Багтайгаа хамт яв."
+      },
+      "Floryn": {
+        skills: [
+          { name: "Dew (идэвхгүй)", desc: "Дэнлүү нь Floryn-д нэмэлт хүч өгдөг бөгөөд тохиромжтой үед нэг хамтрагчдаа хамгаалалтын бамбай дамжуулна." },
+          { name: "Sow (1-р чадвар)", desc: "Дайсан руу энергийн үр шидэж, ойр байгаа хамтрагчдын эрүүл мэндийг нөхнө." },
+          { name: "Sprout (2-р чадвар)", desc: "Энергийн бөөгнөрлийг чиглэлд шидэж дэлбэлнэ; дайснуудыг гэмтээж, богино хугацаанд саатуулна." },
+          { name: "Bloom (онцгой чадвар)", desc: "Газрын зураг дээр хаана байгаагаас үл хамааран бүх хамтрагчаа хэд хэдэн удаа эдгээнэ." }
+        ],
+        howTo: "Багийнхаа эмчилгээг хариуцна. Ultimate-аараа газрын зураг даяар байгаа багийнхаа хүмүүсийг эмчилж чадна, тиймээс алс газраас ч тусалж болно.",
+        late: "Урт баг тулаанд багийнхаа эрүүл мэндийг байнга сэргээж ялалтыг шийднэ.",
+        danger: "Дайснууд эхлээд онилдог. Хамгаалагдсан байрлалд байж ultimate-аа зөв цагт ашигла."
+      },
+      "Khufra": {
+        skills: [
+          { name: "Spell Curse (идэвхгүй)", desc: "Хугацаа өнгөрөхөд дараагийн үндсэн довтолгоогоо хүчирхэгжүүлж, дайсныг удаашруулна." },
+          { name: "Tyrant's Revenge (1-р чадвар)", desc: "Урагш үсэрч замдаа таарсан дайснуудад цохилт өгнө." },
+          { name: "Bouncing Ball (2-р чадвар)", desc: "Бөмбөлөг болон хувирч, дээгүүр нь үсрэх эсвэл хөдөлгөөний чадвараар даван гарахыг оролдсон дайсныг саатуулна." },
+          { name: "Tyrant's Rage (онцгой чадвар)", desc: "Ойр байгаа дайснуудыг урдаа түлхэн цохино; хананд мөргүүлбэл илүү удаан саатна." }
+        ],
+        howTo: "Дайсны гол довтлогчдыг онилж, саатуулах чадвараа ашигла. Онцгой чадвараараа дайсны хөдөлгөөнийг хязгаарла.",
+        late: "Багийн тулаанд дайсныг тогтоон барьж, гэнэтийн довтолгоог нь зогсооно.",
+        danger: "Дайсан хяналтын чадвараараа барьж болно. Чадлаа оновчтой ашигла."
+      },
+      "Masha": {
+        skills: [
+          { name: "Primal Pact (идэвхгүй)", desc: "Олон эрүүл мэндийн нөөцтэй тул нэг нөөц дуусахад зарим саатуулах нөлөөнөөс салж чадна." },
+          { name: "Feral Swipe (1-р чадвар)", desc: "Урагш чиглэлд цохилт өгч, дайсны хөдөлгөөнийг удаашруулна." },
+          { name: "Claw Strike (2-р чадвар)", desc: "Чиглэлд дайрч орон зайгаа хурдан өөрчилж, замдаа байгаа дайсанд гэмтэл учруулна." },
+          { name: "Savage Maul (онцгой чадвар)", desc: "Дайсны баатар руу үсэрч хүчтэй цохилт өгч, ойр байгаа дайснуудыг сарниулна." }
+        ],
+        howTo: "Эрүүл мэндийн нөөцөө анхаарч, давуу мөчөө олсны дараа дайсны гол бай руу ойртон довтол.",
+        late: "Ойрын тулаанд тэсвэр болон довтолгоогоо ашиглан дайсны гол байг шахна.",
+        danger: "Олон дайсанд ганцаараа бүслүүлбэл давуу тал нь хүрэхгүй; довтлохын өмнө багтайгаа байрлалаа тааруул."
+      },
+      "Aamon": {
+        skills: [
+          { name: "Invisible Armor (идэвхгүй)", desc: "Чадвараар дайсан онох үед халхлагдаж, богино хугацаанд хөдөлгөөнөө нэмэгдүүлэн өөрийгөө нөхөн сэргээдэг." },
+          { name: "Soul Shards (1-р чадвар)", desc: "Үндсэн довтолгоо болон халхлагдсан үеэрээ цэнэг хуримтлуулж, дүүрэхэд дараагийн довтолгоондоо нэмэлт хэлтэрхий цацна." },
+          { name: "Slayer Shards (2-р чадвар)", desc: "Урагш хэлтэрхий шидэж дайсныг гэмтээн удаашруулна; буцаж ирэхдээ халхлагдах боломж олгоно." },
+          { name: "Endless Shards (онцгой чадвар)", desc: "Хуримтлуулсан хэлтэрхийнүүдээр нэг дайсныг онилж олон удаагийн цохилт өгнө." }
+        ],
+        howTo: "Эхлээд цэнэг, хэлтэрхийгээ бэлдээд эмзэг дайсан руу богино дайралт хийж, халхлагдсан мөчөө ашиглан байрлалаа соль.",
+        late: "Бүрэн хөгжсөн үедээ ганцаар яваа эмзэг байг хурдан онилж чадна.",
+        danger: "Чадвараа ашигласны дараа дахин дайралтад өртөхөөс болгоомжил; багтайгаа хол тасарч болохгүй."
+      }
+    };
+
+    const heroSkills = {
+      "Aamon": [{ name: "Invisible Armor (идэвхгүй)", desc: "Ур чадвараар дайсанд оноход далдлагдаж, хурд ба HP-ээ сэргээхээс гадна дараагийн үндсэн довтолгоогоо хүчирхэгжүүлнэ." }, { name: "Soul Shards (1-р ур чадвар)", desc: "Хуягийн цэнэгээ хуримтлуулж, тав хүрэхэд дараагийн довтолгоогоороо дайсан руу зургаан хэлтэрхий шидэх бөгөөд идэвхжүүлбэл ойрын дайсан руу хэлтэрхий илгээнэ." }, { name: "Slayer Shards (2-р ур чадвар)", desc: "Урагш хэлтэрхий шидэж дайсныг гэмтээн удаашруулан буцаан татах ба онолгүй бол хэсэг хүлээсний дараа далдлагдана." }, { name: "Endless Shards (ultimate)", desc: "Бүх хэлтэрхийг сонгосон дайсан руу шидэж, удаашруулан, HP нь багасах тусам нэмэгдэх хохирол учруулна." }],
+      "Akai": [{ name: "Tai Chi (идэвхгүй)", desc: "Ур чадвар хэрэглэхэд тэмдэглэгээ авч, чадлаараа тэмдэглэсэн дайсанд үндсэн довтолгоогоороо нэмэлт хохирол учруулна." }, { name: "Headbutt (1-р ур чадвар)", desc: "Урагш дайран дайсны баатрыг агаарт шидэж, хөдөлгөөний чиглэлээ өөрчлөх боломж олгоно." }, { name: "Body Slam (2-р ур чадвар)", desc: "Биеэрээ газрыг цохиж ойр орчмын дайсанд хохирол учруулан удаашруулна." }, { name: "Heavy Spin (ultimate)", desc: "Сөрөг нөлөөгөө арилган эргэлдэж, ойрын дайснуудыг түлхэн холдуулан удаашруулалтад тэсвэртэй болно." }],
+      "Aldous": [{ name: "Contract: Transform (идэвхгүй)", desc: "Үндсэн довтолгооныхоо тодорхой мөчлөгт бамбай авч, цохилтоо хүчирхэгжүүлнэ." }, { name: "Contract: Soul Steal (1-р ур чадвар)", desc: "Дараагийн үндсэн довтолгоогоо хүчирхэгжүүлж, дайсныг устгахад сүнсний цэнэг авч цаашдын цохилтын хохирлоо нэмэгдүүлнэ." }, { name: "Contract: Explosion (2-р ур чадвар)", desc: "Хамгаалалтын байрлал авч хохирол бууруулан хурдсаад, чадлаа дуусгахад ойр дайснуудыг гэмтээж саатуулна." }, { name: "Contract: Chase Fate (ultimate)", desc: "Бүх дайсны байршлыг илрүүлж, дараа нь сонгосон баатар руу нисэн очиж цохилтоороо түлхэнэ." }],
+      "Alice": [{ name: "Crimson Blood Banquet (идэвхгүй)", desc: "Чадлаараа дайсанд онохдоо цэнэг цуглуулж, хоёр цэнэгт хүрэхэд ойр дайснаас HP сорж өөрийгөө сэргээнэ." }, { name: "Crimson Gleam (1-р ур чадвар)", desc: "Урагш цусны энерги илгээгээд дахин ашиглан энергийн байрлал руугаа шилжинэ." }, { name: "Doom Waltz (2-р ур чадвар)", desc: "Ойр орчмын дайснуудыг гэмтээн удаашруулж, Crimson Blood Banquet идэвхтэй үед нэмэлт хохирол учруулан өөрийгөө эдгээнэ." }, { name: "Throne of Ruin (ultimate)", desc: "Цусанд бүрхэгдэн хохиролд тэсвэртэй болж, богино хугацааны дараа газарт буун ойрын дайснуудыг хөдөлгөөнгүй болгоно." }],
+      "Alpha": [{ name: "Beta, Advance! (идэвхгүй)", desc: "Ур чадвар бүрийн дараа Beta дайснууд руу дайрч, хангалттай олон удаа оноход лазераар тэмдэглэсэн байг удаашруулна." }, { name: "Rotary Impact (1-р ур чадвар)", desc: "Урагш энергийн долгион явуулж дайснуудыг удаашруулахад Beta тэр замыг дайран нэмэлтээр гэмтээнэ." }, { name: "Force Swing (2-р ур чадвар)", desc: "Салхин хүрээнд сэлмээрээ дайснуудыг цохиж, оносон дайснаас HP сэлбэн Beta-г давхар довтлуулна." }, { name: "Spear of Alpha (ultimate)", desc: "Beta-г байршил руу илгээж дараа нь араас нь үсрэн очихдоо дайснуудыг агаарт шидэж, удаашруулан цохилт өгнө." }],
+      "Alucard": [{ name: "Pursuit (идэвхгүй)", desc: "Ур чадвар хэрэглэсний дараах үндсэн довтолгоо бай руу ойртон нэмэлт хохирол учруулна." }, { name: "Groundsplitter (1-р ур чадвар)", desc: "Сонгосон газар руу үсрэн газрыг цохиж, дайснуудыг гэмтээн удаашруулна." }, { name: "Whirling Smash (2-р ур чадвар)", desc: "Сэлмээ эргүүлэн ойр орчмын дайснуудад хохирол учруулна." }, { name: "Fission Wave (ultimate)", desc: "Байрлал дахь дайснуудын хамгаалалтыг сулруулж, өөрийнхөө хамгаалалтыг нэмээд дахин ашиглахад цохилтын долгион гаргана." }],
+      "Angela": [{ name: "Smart Heart (идэвхгүй)", desc: "Ур чадвар хэрэглэх бүрдээ хөдөлгөөний хурдаа нэмэх бөгөөд холбоотондоо нэгдсэн үед тэр хурд нэмэгдэл түүнд шилжинэ." }, { name: "Love Waves (1-р ур чадвар)", desc: "Урагш долгион илгээж дайснуудыг гэмтээн тэмдэглэхийн зэрэгцээ холбоотнуудын HP-г сэргээнэ." }, { name: "Puppet-on-a-String (2-р ур чадвар)", desc: "Дайсанд утас залгаж удаашруулан, холбоо тасралгүй байвал хэсэг хугацааны дараа хөдөлгөөнгүй болгоно." }, { name: "Heartguard (ultimate)", desc: "Зайнаас сонгосон холбоотонд бамбай өгч түүнтэй нэгдэн, тодорхой хугацаанд хамтдаа тулалдана." }],
+      "Argus": [{ name: "Warmonger (идэвхгүй)", desc: "Хилэнгийн цэнэг дүүрэхэд дараагийн үндсэн довтолгоогоороо нэмэлт хохирол учруулж HP сэлбэнэ." }, { name: "Demonic Grip (1-р ур чадвар)", desc: "Чөтгөрийн гараа шидэж эхний дайсныг татан саатуулж, дахин ашиглахад урагш дайран сэлмээрээ цавчина." }, { name: "Meteoric Sword (2-р ур чадвар)", desc: "Сэлмээ урагш хатгаж дайснуудыг удаашруулан хараана, харин мөрөөр нь явахад хурд нэмэгдэнэ." }, { name: "Eternal Evil (ultimate)", desc: "Сөрөг нөлөөгөө цэвэрлэн түр хугацаанд Үхэшгүй Тэнгэрлэгийн хэлбэрт орж, тэр үед учруулсан хохирлоороо HP нөхнө." }],
+      "Arlott": [{ name: "Demon Gaze (идэвхгүй)", desc: "Хяналтын нөлөөнд орсон ойрын дайснуудыг тэмдэглэж, үе үе дайсны баатрыг автоматаар тэмдэглэнэ." }, { name: "Dauntless Strike (1-р ур чадвар)", desc: "Жадаа урагш савж дайснуудыг гэмтээн саатуулж, цохилтын захад туссан дайснуудыг удаан хугацаагаар хөдөлгөөнгүй болгоно." }, { name: "Vengeance (2-р ур чадвар)", desc: "Дайсан руу дайран цохих бөгөөд тэмдэгтэй байг оносон бол хохирол нэмэгдэж, чадлын сэргэлт шинэчлэгдэн HP нөхнө." }, { name: "Final Slash (ultimate)", desc: "Урагш ташуулдан дайснуудыг цавчиж, хүрээний зах руу түлхэн байршлыг нь илрүүлнэ." }],
+      "Atlas": [{ name: "Frigid Breath (идэвхгүй)", desc: "Чадал хэрэглэсний дараа мөсөн амьсгал нь ойр дайснуудыг удаашруулж, бүсэд удаан байсан дайсныг хөлдөөн өөрийн хамгаалалтыг нэмнэ." }, { name: "Annihilate (1-р ур чадвар)", desc: "Газрыг дараалан гурван удаа цохиж, цохилт бүрээр ойр дайснуудад хохирол учруулна." }, { name: "Perfect Match (2-р ур чадвар)", desc: "Механик биеэсээ салж хурд, удаашруулалтад тэсвэр аван, эргэн нэгдэхдээ ойрын дайснуудыг гэмтээж саатуулна." }, { name: "Fatal Links (ultimate)", desc: "Дайснуудыг гинжээр холбож, дахин ашиглахад сонгосон чиглэл рүүгээ татан унагаана." }],
+      "Aulus": [{ name: "Fighting Spirit (идэвхгүй)", desc: "Дайсанд хохирол учруулахдаа байлдааны цэнэг хуримтлуулж, дээд хэмжээнд хүрэхэд үндсэн довтолгооны зай болон хүчээ нэмнэ." }, { name: "Aulus, Charge! (1-р ур чадвар)", desc: "Удаашруулалтаа арилган хурд нэмээд, хэсэг хугацаанд хяналтын нөлөөнд өртөхгүй бол удирдлага алдалтад тэсвэртэй болно." }, { name: "The Power of Axe (2-р ур чадвар)", desc: "Сүхээрээ урдаа байгаа дайснуудыг цавчиж удаашруулаад, дайсан оносны дараа дахин ашиглан урагш дайрч газрыг цохино." }, { name: "Cleaving Axe (ultimate)", desc: "Сүхээ дараалан савж ойр дайснуудыг гэмтээх бөгөөд төгсгөлийн цохилт нь өргөн хүрээг хамарна." }],
+      "Aurora": [{ name: "Pride of Ice (идэвхгүй)", desc: "Үхлийн цохилт авахад мөс болон хэсэг хугацаанд гэмтэхгүй байж, HP-гээ аажмаар сэргээнэ." }, { name: "Hailstone Blast (1-р ур чадвар)", desc: "Сонгосон хэсэгт мөсөн солир буулгаж дайснуудыг удаашруулан, дараа нь мөндөр нэмж унагана." }, { name: "Frosty Breeze (2-р ур чадвар)", desc: "Сэнс хэлбэрээр мөсөн салхи үлээж дайснуудыг хөлдөөн, төгсгөлийн хэсэгт гэмтээх мөсөн бүс үүсгэнэ." }, { name: "Frigid Glacier (ultimate)", desc: "Мөсөн зам үүсгэн дайснуудыг удаашруулж, тэлсэн мөсөн гол хагарахдаа тэднийг гэмтээн хөлдөөнө." }],
+      "Badang": [{ name: "Chivalry Fist (идэвхгүй)", desc: "Дөрвөн удаа үндсэн довтолсны дараагийн цохилт дайсныг түлхэх бөгөөд сааданд мөргүүлбэл хөдөлгөөнгүй болгоно." }, { name: "Fist Wind (1-р ур чадвар)", desc: "Нударганы салхи илгээж дайснуудыг гэмтээн удаашруулж түлхэх бөгөөд сааданд мөргөвөл дэлбэрнэ." }, { name: "Fist Break (2-р ур чадвар)", desc: "Урагш дайрч замдаа таарсан дайснуудыг гэмтээн, баатар мөргөхөд нь араас нь саад босгоно." }, { name: "Fist Crack (ultimate)", desc: "Урагш чиглэлд дараалсан хүчтэй цохилт буулгахдаа хяналтын нөлөөнд тэсвэртэй байна." }],
+      "Balmond": [{ name: "Bloodthirst (идэвхгүй)", desc: "Дайсан устгах бүрдээ төрлөөс нь хамааран HP-гээ сэргээнэ." }, { name: "Soul Lock (1-р ур чадвар)", desc: "Урагш дайран замын дайснуудыг гэмтээж, мөргөсөн баатрыг түлхэн удаашруулж хамгаалалтыг нь бууруулна." }, { name: "Cyclone Sweep (2-р ур чадвар)", desc: "Сүхээ эргүүлэн ойр дайснуудыг олон удаа цохих бөгөөд нэг байг дараалан онох тусам хохирол нэмэгдэнэ." }, { name: "Lethal Counter (ultimate)", desc: "Өргөн зурвасаар хүчтэй цохилт өгч, HP багатай дайснуудад илүү хохирол учруулна." }],
+      "Bane": [{ name: "Shark Bite (идэвхгүй)", desc: "Чадлаараа цэнэг хуримтлуулж, дараагийн үндсэн довтолгоогоороо ойрын дайснуудад нэмэлт хохирол өгнө." }, { name: "Crab Claw Cannon (1-р ур чадвар)", desc: "Их буугаар дайсныг оноод сумыг цааш нь үсэргэн өөр байг гэмтээн удаашруулна." }, { name: "Ale (2-р ур чадвар)", desc: "Ундаа ууж HP-гээ нөхөн хурд нэмээд, дахин ашиглахад хор цацаж урдах дайснуудыг гэмтээнэ." }, { name: "Deadly Catch (ultimate)", desc: "Акулуудын сүргийг урагш илгээж дайснуудыг гэмтээн агаарт шидэж, удаашруулна." }],
+      "Barats": [{ name: "Big Guy (идэвхгүй)", desc: "Дайсанд чадлаараа онохдоо Детонагийн хэмжээг өсгөх цэнэг авч, цэнэг бүр нь хамгаалалтыг нь нэмэгдүүлнэ." }, { name: "So-Called Teamwork (1-р ур чадвар)", desc: "Детона тос цацаж, Баратс түүнийг асаан талбай дахь дайснуудад нэмэлт хохирол учруулна." }, { name: "Missile \\\"Expert\\\" (2-р ур чадвар)", desc: "Хоёр пуужин харваж дэлбэрэхдээ утаагаар дайснуудыг гэмтээн өөр рүүгээ түлхэнэ." }, { name: "Detona's Welcome (ultimate)", desc: "Детона урагш дайрч эхний дайсныг залгиж түр саатуулаад, дараа нь түүнийг нулимж гаргана." }],
+      "Baxia": [{ name: "Baxia Mark (идэвхгүй)", desc: "Авах хохирлоо бууруулж, чадлаараа онох дайсны HP болон бамбайн нөхөн сэргэлтийг сааруулна." }, { name: "Baxia-Shield Unity (1-р ур чадвар)", desc: "Бамбайдаа хумигдан хурдтай өнхөрч дайснуудыг гэмтээн саатуулж, дахин ашиглахад саадыг даван үсэрнэ." }, { name: "Shield of Spirit (2-р ур чадвар)", desc: "Бамбайгаа шидэж дайсныг тэмдэглэн удаашруулж, баатар эсвэл мөлхөгч дайсныг оноход дахин ашиглах боломж гарна." }, { name: "Tortoise's Puissance (ultimate)", desc: "Бамбайгаа барин хурдалж замдаа лав үлдээн, уг мөрөнд орсон дайснуудыг давтан гэмтээж удаашруулна." }],
+      "Beatrix": [{ name: "Mechanical Genius (идэвхгүй)", desc: "Дөрвөн өөр буу хэрэглэж болох бөгөөд буу бүрийн үндсэн довтолгоо өөр, харин критийн боломж физик довтолгоо болж хувирна." }, { name: "Masterful Gunner (1-р ур чадвар)", desc: "Хоёр буугаа сольж, үндсэн довтолгоо болон ultimate-ийн хэлбэрээ өөрчилнө." }, { name: "Tactical Reposition (2-р ур чадвар)", desc: "Сонгосон буунаасаа хамааран урагш бултан хөдөлж одоо хэрэглэж буй буугаа цэнэглэнэ." }, { name: "Renner's Apathy / Bennett's Rage / Wesker's Elation / Nibiru's Passion (ultimate)", desc: "Сонгосон буунаасаа хамааран нэг байг онилж буудах, талбайг бөмбөгдөх, ойрын дайсныг олон сумдах эсвэл суман шуурга тавина." }],
+      "Belerick": [{ name: "Deadly Thorns (идэвхгүй)", desc: "Хохирол авахдаа үе үе ойрын дайсан руу өргөс харваж, өөрийн дээд HP ихсэхэд нэмэлт ашиг хүртэнэ." }, { name: "Ancient Seed (1-р ур чадвар)", desc: "Урагш ургамлын мөр үүсгэн дайснуудыг гэмтээж удаашруулаад, удалгүй тэднийг өдөөн өөр рүүгээ дайруулна." }, { name: "Nature's Strike (2-р ур чадвар)", desc: "Хурд нэмэн дараагийн үндсэн довтолгоогоо хүчирхэгжүүлж, байг гэмтээн удаашруулна." }, { name: "Wrath of Dryad (ultimate)", desc: "Ойр орчимд ургамлын үндэс дэлгэн дайснуудыг давтан гэмтээж, өөр рүүгээ дайрахад хүргэнэ." }],
+      "Benedetta": [{ name: "Elapsed Daytime (идэвхгүй)", desc: "Үндсэн довтолгооны товчийг дарж илдний цэнэг хуримтлуулаад суллахад урагш цавчиж дайрна." }, { name: "Phantom Slash (1-р ур чадвар)", desc: "Арагш бултан сүүдэр үлдээн, дараа нь сүүдрээ урагш цавчуулж дайснуудыг удаашруулна." }, { name: "An Eye for An Eye (2-р ур чадвар)", desc: "Хэсэг хугацаанд хохирол болон хяналтын нөлөөг хааж, дараа нь урагш хатгана." }, { name: "Alecto: Final Blow (ultimate)", desc: "Урагш харайхдаа илдний мөр гарган зам дахь дайснуудыг цавчиж, удаашруулна." }],
+      "Brody": [{ name: "Abyss Corrosion (идэвхгүй)", desc: "Үндсэн довтолгоо хийхдээ хөдөлж болох бөгөөд дайсанд хуримтлагдах тэмдэг тавьж, дараагийн цохилтын хохирлоо нэмэгдүүлнэ." }, { name: "Abyss Impact (1-р ур чадвар)", desc: "Урагш долгион явуулж дайснуудыг гэмтээн удаашруулж, Абиссийн тэмдэг тавина." }, { name: "Corrosive Strike (2-р ур чадвар)", desc: "Дайсан руу дайран гэмтээж, саатуулан тэмдэг тавиад дахин хөдөлж байрлалаа өөрчилнө." }, { name: "Torn-Apart Memory (ultimate)", desc: "Ойр орчмын дайснууд руу чиглэсэн цохилт өгч, бай дээрх Абиссийн тэмдгүүдийг зарцуулан нэмэлт хохирол учруулна." }],
+      "Bruno": [{ name: "Mecha Legs (идэвхгүй)", desc: "Ур чадвараараа хохирол өгөх бүрдээ критийн боломж хуримтлуулна." }, { name: "Volley Shot (1-р ур чадвар)", desc: "Дараагийн үндсэн довтолгоогоо хүчирхэг бөмбөг болгон дайсныг удаашруулж, бөмбөг ойх үед буцаан авна." }, { name: "Flying Tackle (2-р ур чадвар)", desc: "Урагш гулсан замын дайснуудыг гэмтээж саатуулан, ойсон бөмбөгөө өөр лүүгээ татна." }, { name: "Worldie (ultimate)", desc: "Энергийн бөмбөгөө дайсны баатар руу шидэж, ойролцоох дайснуудын хооронд үсэргэн хамгаалалтыг нь бууруулна." }],
+      "Carmilla": [{ name: "Vampire Pact (идэвхгүй)", desc: "Дайсны баатарт хохирол учруулахдаа түүний физик болон шидийн хамгаалалтыг хулгайлан түр хугацаанд хуримтлуулна." }, { name: "Crimson Flower (1-р ур чадвар)", desc: "Эргэн тойрон эргэлдэх цэцгүүдээр дайснуудыг гэмтээн удаашруулж, цохилт бүрээр HP нөхнө." }, { name: "Bloodbath (2-р ур чадвар)", desc: "Энерги цуглуулах зуур хурдаа нэмээд дахин ашиглахад дайсан руу дайран гэмтээж саатуулна." }, { name: "Curse of Blood (ultimate)", desc: "Бүсэд буй дайснуудыг удаашруулан, хооронд нь холбоод хугацаа дуусахад хөдөлгөөнгүй болгож, нэгэнд учирсан хохирол ба хяналтыг бусдад дамжуулна." }],
+      "Cecilion": [{ name: "Overflowing (идэвхгүй)", desc: "Ур чадвар дайсанд онохдоо манагаа нөхөж, дээд мана болон чадлын хохирлоо аажмаар өсгөнө." }, { name: "Bat Impact (1-р ур чадвар)", desc: "Аварга сарьсан багваахайг урагш илгээж дайснуудыг дайруулан гэмтээх бөгөөд төгсгөлд нь дахин дайрна." }, { name: "Sanguine Claws (2-р ур чадвар)", desc: "Цусны хумс дуудаж дайснуудыг төв рүү татан гэмтээж хөдөлгөөнгүй болгоно." }, { name: "Bats Feast (ultimate)", desc: "Ойр дайснууд руу цусны сум цацаж, удаашруулан, цохилтоороо HP нөхөж удаашруулалтад тэсвэртэй болно." }],
+      "Chang'e": [{ name: "Trouble Maker (идэвхгүй)", desc: "Дайсанд хохирол учруулах бүрдээ тэмдэг тавьж, тэмдэг бүрээр түүний хөдөлгөөний хурдыг бууруулна." }, { name: "Starmoon Shockwave (1-р ур чадвар)", desc: "Энергийн бөмбөлөг урагш илгээж дайснуудыг гэмтээн удаашруулан, Crescent Moon байвал нэмэлт бөмбөлгүүд дагалдуулна." }, { name: "Crescent Moon (2-р ур чадвар)", desc: "Бамбайтай сар дуудан өөрийгөө хамгаалж хурд нэмэхийн зэрэгцээ үндсэн довтолгоогоо ид шидийн хохирлоор хүчирхэгжүүлнэ." }, { name: "Meteor Shower (ultimate)", desc: "Урагш чиглэлд олон солир дараалан цацаж дайснуудыг гэмтээнэ." }],
+      "Chip": [{ name: "Snack Time! (идэвхгүй)", desc: "Тулаанаас гадуур зуушаа идэж дуусгахад алдагдсан HP-гээ нөхнө." }, { name: "Crash Course (1-р ур чадвар)", desc: "Ховеркрафтаа газарт буулган дайснуудыг тэмдэглэж, дараагийн үндсэн довтолгоогоор тэмдэглэгээг дэлбэлэн саатуулна." }, { name: "Overtime (2-р ур чадвар)", desc: "Хурдаа аажмаар нэмэн дайрч, дараагийн үндсэн довтолгоогоор дайсанд мөргөн түлхэнэ." }, { name: "Shortcut (ultimate)", desc: "Дайсны баатарт гол порталаа байрлуулж багийнхныхаа хөдөлгөөний порталуудтай холбон, хоёр талд хурдан шилжих боломж нээнэ." }],
+      "Chou": [{ name: "Only Fast (идэвхгүй)", desc: "Тодорхой зай туулсны дараа дараагийн үндсэн довтолгоо илүү хүчтэй болж, байг удаашруулан хамгаалалтыг нь бууруулна." }, { name: "Jeet Kune Do (1-р ур чадвар)", desc: "Гурван дараалсан цохилт хийж, сүүлийнх нь дайснуудыг агаарт шидэх бөгөөд баатар оносноор хоёрдугаар чадлын сэргэлт шинэчлэгдэнэ." }, { name: "Shunpo (2-р ур чадвар)", desc: "Урагш дайран хяналтын нөлөөнд тэсвэртэй болж бамбай авна." }, { name: "The Way of Dragon (ultimate)", desc: "Дайсны баатрыг өшиглөн түлхэж, дахин ашиглахад араас нь гүйцэн давтан өшиглөнө." }],
+      "Cici": [{ name: "Performer's Delight (идэвхгүй)", desc: "Хохирол учруулах бүрдээ хурд, шидийн соролтоо нэмэхээр давхарга цуглуулж, дээд давхаргад нэмэгдлээ хоёр дахин өсгөнө." }, { name: "Yo-Yo Blitz (1-р чадвар)", desc: "Ёогоороо ойрын дайсныг тасралтгүй цохихдоо хөдөлж, бусад чадвараа ашиглаж чадна." }, { name: "Buoyant Bounce (2-р чадвар)", desc: "Заасан газар руу үсэрч, нэгж дээр буувал чиглэлээ өөрчлөн дахин харайж, дайсан дээр буухдаа хохирол өгнө." }, { name: "Curtain Call (супер чадвар)", desc: "Хоёр дайсныг уяагаар холбон удаашруулж, ойртуулснаар Yo-Yo Blitz-ээр хоёуланг нь зэрэг онилно." }],
+      "Claude": [{ name: "Battle Side-by-side (идэвхгүй)", desc: "Үндсэн довтолгоо бүрт Декстер нэмэлтээр цохиж, өөрийн дайралтын нөлөөний хэсгийг давхар хэрэглэнэ." }, { name: "Art of Thievery (1-р чадвар)", desc: "Урд талын дайснуудыг цохиж удаашруулан, тус бүрийг онохдоо хөдөлгөөн болон довтолгооны хурдаа түр нэмнэ." }, { name: "Battle Mirror Image (2-р чадвар)", desc: "Декстерийн хуурмаг дүрийг байрлуулж дайснууд руу довтлуулах эсвэл түүнтэй байраа солих боломж олгоно." }, { name: "Blazing Duet (супер чадвар)", desc: "Ойр орчмын дайснууд руу түргэн буудаж, үндсэн довтолгооны нөлөөг ашиглах зуураа бамбай авна." }],
+      "Clint": [{ name: "Double Shot (идэвхгүй)", desc: "Чадвар хэрэглэсний дараах үндсэн довтолгоо шугаман чиглэлд нэвт тусаж, дайралтын нөлөө болон критийг ашиглана." }, { name: "Quick Draw (1-р чадвар)", desc: "Урагш таван сум цувуулан буудаж, нэг дайсан олон суманд өртөхөд дараагийн сумнууд нь бага хохирол учруулна." }, { name: "Trapping Recoil (2-р чадвар)", desc: "Ухран үсэрч тор буудан эхний дайсныг хөдөлгөөнгүй болгож, оновол чадварын хүлээлтийг богиносгоно." }, { name: "Grenade Bombardment (супер чадвар)", desc: "Гранат шидэж эхний байндаа дэлбэлэн удаашруулж, сумнуудаа тодорхой хугацаанд цэнэглэнэ." }],
+      "Cyclops": [{ name: "Starlit Hourglass (идэвхгүй)", desc: "Чадвараараа дайсанд онох бүрд бүх чадварынхаа хүлээлтийг богиносгоно." }, { name: "Stardust Shock (1-р чадвар)", desc: "Хоёр оддын дискийг нэг чигт илгээж, замд таарсан дайснуудад хохирол учруулна." }, { name: "Planets Attack (2-р чадвар)", desc: "Өөрийгөө тойруулан дайснуудыг хайх бөмбөлгүүд үүсгэж, хөдөлгөөний хурдаа түр нэмнэ." }, { name: "Star Power Lockdown (супер чадвар)", desc: "Онилсон дайсныг дагах гараг илгээж, хохирол өгөхийн зэрэгцээ аялсан зайнаас хамаарч хөдөлгөөнгүй болгоно." }],
+      "Diggie": [{ name: "Young Again (идэвхгүй)", desc: "Үхсэний дараа өндөг болж, бай болохгүйгээр хөдөлсөөр хугацааны дараа амилна." }, { name: "Auto Alarm Bomb (1-р чадвар)", desc: "Байрлуулсан дохиолол ойртох дайснаа хөөж дэлбэрэн хохирол өгч удаашруулна." }, { name: "Reverse Time (2-р чадвар)", desc: "Дайсанд тэмдэг тавьж, хугацаа дуусах эсвэл хүрээнээс гарахад нь өмнөх байранд нь татан удаашруулна." }, { name: "Time Journey (супер чадвар)", desc: "Ойрын холбоотнуудын сөрөг нөлөөг арилгаж, бамбай болон хяналтын нөлөөнөөс дархлаа өгнө." }],
+      "Dyrroth": [{ name: "Wrath of the Abyss (идэвхгүй)", desc: "Хоёр үндсэн довтолгоо тутам тойрогт цохилт өгч, амь нөхөн, дайсны баатар оносон үед хоёр чадварын хүлээлтийг бууруулна; уур дүүрэхэд эхний хоёр чадвар хүчирнэ." }, { name: "Burst Strike (1-р чадвар)", desc: "Урагш чиглэсэн цохилтоор дайснуудыг удаашруулж, уурын хүчээр хэрэглэвэл хүрээ болон нөлөөгөө нэмнэ." }, { name: "Spectre Step (2-р чадвар)", desc: "Дайран очоод дахин идэвхжүүлж байг цохин хамгаалалтыг нь бууруулна; хүчирсэн үед хохирол болон удаашруулах нөлөө нэмэгдэнэ." }, { name: "Abysm Strike (супер чадвар)", desc: "Богино саатлын дараа урагш хүчтэй цавчиж, дайсны алдсан амьтай нь уялдсан хохирол өгч удаашруулна." }],
+      "Edith": [{ name: "Overload (идэвхгүй)", desc: "Чадвар хэрэглэсний дараа хэсэг хугацаанд үндсэн довтолгоо нь ойрын дайснуудад гинжин цахилгаан тараана." }, { name: "Earth Shatter / Divine Retribution (1-р чадвар)", desc: "Phylax хэлбэрт цохилтоор дайснуудыг агаарт шиднэ, харин Edith хэлбэрт талбайг цахилгаанаар цохиж үргэлжлэн хохирол өгнө." }, { name: "Onward / Lightning Bolt (2-р чадвар)", desc: "Phylax хэлбэрт урагш дайрч баатрыг мөрөн дээгүүрээ шиднэ, харин Edith хэлбэрт цахилгаан сум тусгаж дайсныг хөдөлгөөнгүй болгоно." }, { name: "Primal Wrath (супер чадвар)", desc: "Phylax-д байхдаа авсан хохирлоос уур хуримтлуулж, Edith болон хувирснаар алсын довтолгоо, бамбай, довтолгооны хурд, соролтын нэмэгдэл авна." }],
+      "Esmeralda": [{ name: "Starmoon Casket (идэвхгүй)", desc: "Хос зэвсгээрээ биет болон шидийн хохирол учруулж, хохирол нь бамбайг үл тоон өөрийн бамбайг аажмаар амь болгоно." }, { name: "Frostmoon Shield (1-р чадвар)", desc: "Өөртөө бамбай, түр хурд авч, ойрын дайснуудын бамбайг өөртөө шингээнэ." }, { name: "Stardust Dance (2-р чадвар)", desc: "Хоёр зэвсгээр тойргоо цохиж дайснуудыг удаашруулан, оносон баатраас хамаарч Frostmoon Shield-ийн хүлээлтийг багасгана." }, { name: "Falling Starmoon (супер чадвар)", desc: "Оновчоо цэнэглэсний дараа Stardust-аа шидэж, бай руу үсрэн Frostmoon-оор цохиж дайснуудыг хөдөлгөөнгүй болгоно." }],
+      "Estes": [{ name: "Scripture of the Moon Elf (идэвхгүй)", desc: "Энергиэ цэнэглэн, дүүрэхэд дараагийн үндсэн довтолгоогоо хүчирхэг шидийн цохилт болгож ойрын дайснуудад ч тусгана." }, { name: "Moonlight Immersion (1-р чадвар)", desc: "Холбоотныг нэн даруй эдгээж, холбоо тогтоон үргэлжлүүлэн эдгээх зуур өөрийн хамгаалалт, хөдөлгөөний хурдыг нэмнэ." }, { name: "Domain of Moon Goddess (2-р чадвар)", desc: "Сонгосон хэсэгт сарны гэрэл буулгаж дайснуудыг гэмтээн илрүүлж, талбайн ирмэгт хүрэхэд нь хүчтэй удаашруулна." }, { name: "Blessing of Moon Goddess (супер чадвар)", desc: "Ойрын холбоотнуудад Moonlight Immersion-ийн хүчирсэн эдгэрэлтийг зэрэг өгч, өөрийгөө тасралтгүй эдгээнэ." }],
+      "Eudora": [{ name: "Superconductor (идэвхгүй)", desc: "Чадвараараа дайсанд тэмдэг тавьж, тэмдэгтэй байнд хэрэглэсэн бусад чадвараа нэмэлт нөлөөтэй болгоно." }, { name: "Forked Lightning (1-р чадвар)", desc: "Сэнс хэлбэрээр цахилгаан цацаж дайснуудыг гэмтээнэ; тэмдэгтэй байг оноход цахилгаан гинж үүсгэнэ." }, { name: "Ball Lightning (2-р чадвар)", desc: "Цахилгаан бөмбөлөг шидэж байг цочроон шидийн хамгаалалтыг нь бууруулна; тэмдэгтэй байг оноход ойрын дайснуудыг ч хамруулна." }, { name: "Thunder's Wrath (супер чадвар)", desc: "Сонгосон хэсэгт аянга буулгаж, тэмдэгтэй дайсанд нэмэлт тэсрэлт үүсгэнэ." }],
+      "Fanny": [{ name: "Air Superiority (идэвхгүй)", desc: "Нисэх хурдтайгаа уялдуулан хохирлоо нэмэгдүүлж, дайсанд тэмдэг тавьснаар түүн рүү чиглэсэн дараагийн чадварын энерги нөхнө." }, { name: "Tornado Strike (1-р чадвар)", desc: "Эргэлдэн ойрын дайснуудад хохирол учруулна." }, { name: "Steel Cable (2-р чадвар)", desc: "Кабель шидэж сааданд татагдана; дахин шидэж үргэлжлүүлэн нисэхдээ дайсанд хүрвэл Tornado Strike автоматаар хийнэ." }, { name: "Cut Throat (супер чадвар)", desc: "Бай болсон дайсан руу үсрэн цавчиж, түүний тэмдгийн тоогоор хохирлоо өсгөнө." }],
+      "Faramis": [{ name: "Vicious Retrieval (идэвхгүй)", desc: "Сүнсний хэлтэрхий цуглуулж амь болон шидийн хүчээ нэмэгдүүлэхээс гадна үхэхэд дахин төрөх хугацааг богиносгоно." }, { name: "Shadow Stampede (1-р чадвар)", desc: "Сүүдрийн хэлбэрт орж газар нэвтлэн хурд, хамгаалалт нэмэх ба тэмдэглэсэн дайснуудаа өөр лүүгээ татна." }, { name: "Ghost Bursters (2-р чадвар)", desc: "Өмнөх хэсэгтээ шидийн энерги цацаж, дайснуудад хүрэхэд ойрын бай руу үсрэн тархах энерги илгээнэ." }, { name: "Nether Realm (супер чадвар)", desc: "Өөрийгөө болон ойрын холбоотнуудаа түр нэмэлт амьтай болгож, нөлөө дуусахад сөрөг нөлөөг арилган дахин амилуулах боломж олгоно." }],
+      "Floryn": [{ name: "Dew (идэвхгүй)", desc: "Дэнлүү нь Floryn-д байнгын нэмэгдэл өгч, холбоотонтой хуваалцвал түүнийг Floryn эдгээх бүрд бамбай үүсгэнэ." }, { name: "Sow (1-р чадвар)", desc: "Дайсанд энергийн үр шидэж гэмтээн, ойрын холбоотнуудад үсрэн хүрэх эдгээх жимс гаргана." }, { name: "Sprout (2-р чадвар)", desc: "Энергийн бөмбөлөг дэлбэлж ойрын дайснуудыг цочроон богино хугацаанд илрүүлнэ." }, { name: "Bloom (супер чадвар)", desc: "Хаана байгаагаас үл хамааран бүх амьд холбоотныг хоёр удаа эдгээж, эдгэрэлт болон бамбайн үр нөлөөг түр нэмнэ." }],
+      "Franco": [{ name: "Wasteland Force (идэвхгүй)", desc: "Хохирол аваагүй үедээ хурд, амь нөхөлт авч хүч хуримтлуулан, дараагийн чадварынхаа хохирлыг өсгөнө." }, { name: "Iron Hook (1-р чадвар)", desc: "Дэгээгээ шидэж эхний оногдсон нэгжийг өөр лүүгээ татна." }, { name: "Fury Shock (2-р чадвар)", desc: "Ойр орчмын дайснуудыг цохиж ихээр удаашруулна." }, { name: "Bloody Hunt (супер чадвар)", desc: "Дайсны баатрыг хөдөлгөөнгүй дарж барин олон удаа цохино." }],
+      "Fredrinn": [{ name: "Crystalline Armor (идэвхгүй)", desc: "Дайсанд чадвараараа онох бүрд хослолын оноо авч, авсан хохирлын хэсгийг энерги болгон хадгалж дайралтаараа амь нөхнө." }, { name: "Piercing Strike (1-р чадвар)", desc: "Урагш сэлмээрээ хатгаж дайснуудыг удаашруулан, дараагийн үндсэн довтолгоогоо хүчирхэгжүүлнэ." }, { name: "Brave Assault (2-р чадвар)", desc: "Урагш дайран эхний дайсныг цохиж, дараагийн үндсэн довтолгоогоор нь агаарт шиднэ." }, { name: "Energy Eruption / Appraiser's Wrath (супер чадвар)", desc: "Нэг хослолын оноогоор ойрын дайснуудыг өдөөн бусад чадварын хүлээлтийг бууруулж, гурван оноогоор хадгалсан энергид суурилсан хүчтэй сэлэмний цохилт хийнэ." }],
+      "Freya": [{ name: "Power of Einherjar (идэвхгүй)", desc: "Үндсэн довтолгоогоороо ариун бөмбөлөг цуглуулж, зарцуулахдаа дараагийн довтолгооны хурдыг эрс нэмнэ." }, { name: "Leap of Faith (1-р чадвар)", desc: "Байрлал руу үсрэн дайснуудыг агаарт шидэж, өөртөө бамбай авна." }, { name: "Valkyrie Slash (2-р чадвар)", desc: "Урагш давшиж сэлмээр цавчин дайснуудыг удаашруулахдаа ариун бөмбөлөг зарцуулна." }, { name: "Valkyrie Descent (супер чадвар)", desc: "Байрлал руу дархлаатайгаар бууж дайснуудад хохирол өгөөд, өргөн хүрээтэй үндсэн довтолгоо болон амь нөхөлттэй хүчирсэн хэлбэрт орно." }],
+      "Gatotkaca": [{ name: "Steel Bones (идэвхгүй)", desc: "Алдсан амьтайгаа уялдуулан биеийн хамгаалалт авч, хохирол амсахдаа уур хуримтлуулан түүгээр хүчирхэг довтолгоо, амь нөхөлт хийнэ." }, { name: "Blast Iron Fist (1-р чадвар)", desc: "Газар цохиж талбай үүсгэн дайснуудыг гэмтээж, удаан хугацаанд удаашруулна." }, { name: "Unbreakable (2-р чадвар)", desc: "Цэнэглэн урагш давшиж зам дахь дайснуудыг өөр лүүгээ дайрахад хүргэнэ." }, { name: "Avatar of the Guardian (супер чадвар)", desc: "Байрлал руу үсрэн бууж ойр орчмын дайснуудыг агаарт шидэж, захынхыг төв рүү татна." }],
+      "Gloo": [{ name: "Stick, Stick (идэвхгүй)", desc: "Чадвараараа онох бүрд дайсанд наалдамхай давхарга үүсгэж, хөдөлгөөнийг нь бууруулан өөрт учруулах хохирлыг багасгана." }, { name: "Slam, Slam (1-р чадвар)", desc: "Газрыг цохиж дэлбэрэх наалдамхай хэсэг үлдээнэ; өөрөө хүрвэл шууд дэлбэлж чадвараа сэргээж амь нөхнө." }, { name: "Spread, Spread (2-р чадвар)", desc: "Хэсэглэн дайснуудыг хөдөлгөөнгүй болгож, наалдамхай хэсэг рүүгээ дайран нийлэн замын дайснуудыг чирнэ." }, { name: "Grab, Grab (супер чадвар)", desc: "Давхарга нь дүүрсэн дайсны баатарт наалдаж амь нөхөн, авсан хохирлынхоо ихэнхийг байдаа дамжуулна." }],
+      "Gord": [{ name: "Mystic Favor (идэвхгүй)", desc: "Дайсанд хэдэнтээ хүрсний дараах цохилт нэмэлт үнэн хохирол өгч, удаашруулна." }, { name: "Mystic Projectile (1-р чадвар)", desc: "Ойж яваа шидийн бөмбөлөг эхний дайсанд хүрэхэд дэлбэрч хохирол өгч, тэднийг цочроон байрлалыг нь илчилнэ." }, { name: "Mystic Injunction (2-р чадвар)", desc: "Сонгосон талбайд энергийн орон үүсгэж, доторх дайснуудыг давтамжтай гэмтээнэ." }, { name: "Mystic Gush (супер чадвар)", desc: "Чиглэлийг тохируулж болох энергийн туяагаар зам дахь дайснуудыг олон удаа гэмтээнэ." }],
+      "Granger": [{ name: "Capriccio (идэвхгүй)", desc: "Буу, их бууны энергиэ тус тусад нь нөхөж, дайсныг устгах бүрд нөөцөө өсгөнө; авсан чадварын хүлээлтийн бууруулалт довтолгооны хүч болдог." }, { name: "Rhapsody (1-р чадвар)", desc: "Буугаар зургаан удаа цувруулан буудаж, сүүлийн сумаа заавал крит болгохын зэрэгцээ хөдөлгөөнөө түр нэмнэ." }, { name: "Rondo (2-р чадвар)", desc: "Зориулсан чиглэлд дайран бууныхаа энергийг нөхөж, Rhapsody дайсанд хүрэх бүрд чадварын хүлээлтээ бууруулна." }, { name: "Death Sonata (супер чадвар)", desc: "Их буугаар буудаж байг болон ойрын дайснуудыг удаашруулан илчилж, сум бүрийн дараа бултаж өнхөрнө." }],
+      "Grock": [{ name: "Bastion of Stone (идэвхгүй)", desc: "Бамбай авч, дараагийн үндсэн довтолгоогоо хүчирхэгжүүлнэ; саадны ойролцоо бамбай хурдан сэргэж, чадварыг таслуулахгүй." }, { name: "Mighty Swing (1-р чадвар)", desc: "Урагш хүчтэй цохиж, дайсных нь ард саад байвал түүн рүү мөргүүлэн агаарт шиднэ." }, { name: "Earthen Rampart (2-р чадвар)", desc: "Чулуу хана босгохдоо дайснуудыг өөр лүүгээ түлхэнэ; дахин хэрэглэвэл ханыг эрт буулгана." }, { name: "Tectonic Charge (супер чадвар)", desc: "Урагш дайран замын дайснуудыг гэмтээж, саад мөргөвөл дэлбэрч ойр орчмынхыг агаарт шиднэ." }],
+      "Guinevere": [{ name: "Super Magic (идэвхгүй)", desc: "Цохилт бүрээр шидийн хүч хуримтлуулж, хүчирсэн үндсэн довтолгоогоор тэмдэг тавина; гурван тэмдэгтэй дайсныг супер чадвараар агаарт шиднэ." }, { name: "Energy Wave (1-р чадвар)", desc: "Энергийн бөмбөлөг илгээж эхний дайсныг удаашруулан онох бүрд бүх чадварын хүлээлтийг бууруулна." }, { name: "Spatial Migration (2-р чадвар)", desc: "Байрлал руу үсэрч дайснуудыг агаарт шидээд, дахин үсрэн хуурмаг дүр үлдээнэ." }, { name: "Violet Requiem (супер чадвар)", desc: "Ойрын дайснуудыг олон удаа цохих зуур хяналтын нөлөөнөөс дархлаатай болж, агаарт буйг дахин шиднэ." }],
+      "Gusion": [{ name: "Dagger Specialist (идэвхгүй)", desc: "Чадвар хэрэглэснээр хутгандаа руни хуримтлуулж, дараагийн үндсэн довтолгоогоо байны алдсан аминд суурилсан хохирол, өөртөө амь нөхөлттэй болгоно." }, { name: "Sword Spike (1-р чадвар)", desc: "Хутга шидэж эхний байг тэмдэглээд, дахин хэрэглэн түүний ард очиж хохирол учруулна." }, { name: "Shadowblade Slaughter (2-р чадвар)", desc: "Таван хутга шидэж дайснуудыг удаашруулан, дахин хэрэглээд буцаан татаж замд таарсныг гэмтээнэ." }, { name: "Incandescence (супер чадвар)", desc: "Байрлал руу дайран эхний хоёр чадварын хүлээлтийг шинэчилж, хутганы довтолгоогоо дахин хийх боломж олгоно." }],
+      "Hanabi": [{ name: "Ninjutsu: Petal Barrage (идэвхгүй)", desc: "Үндсэн довтолгоо болон чадвар нь ойрын дайснууд руу үсрэх дэлбээт сумнууд үүсгэнэ." }, { name: "Ninjutsu: Equinox (1-р чадвар)", desc: "Бамбай авч хурд, довтолгооны хурдаа нэмнэ; бамбайтай үед хяналтын нөлөөнөөс дархлаатай байна." }, { name: "Ninjutsu: Soul Scroll (2-р чадвар)", desc: "Энергийн хутга шидэн замын дайснуудыг удаашруулж тэмдэглэснээр дараагийн үсрэх довтолгооны хохирлыг нэмнэ." }, { name: "Forbidden Jutsu: Higanbana (супер чадвар)", desc: "Эхний дайсны баатрыг хөдөлгөөнгүй болгон цэцэг дэлбээлгэж, ойр орчмын дайснуудад давхар хохирол учруулна." }],
+      "Hanzo": [{ name: "Ame No Habakiri (идэвхгүй)", desc: "Үндсэн довтолгоо болон чадвараараа дайсанд хар нинжагийн давхарга тавьж, дүүрсэн байг эхний чадвараар онилох нөхцөл бүрдүүлнэ." }, { name: "Ninjutsu: Demon Feast (1-р чадвар)", desc: "Давхарга нь дүүрсэн байг залгиж амь нөхнө; дайсны баатар эсвэл том мангасыг онилоход их хохирол өгнө." }, { name: "Ninjutsu: Dark Mist (2-р чадвар)", desc: "Урагш дайран бараан манан үлдээж, доторх дайснуудыг давтан гэмтээн удаашруулна." }, { name: "Kinjutsu: Pinnacle Ninja (супер чадвар)", desc: "Сүнсэн хэлбэрт орж саадыг үл тоон хурдтай довтлох ч энерги хэрэглэнэ; дахин ашиглахад биедээ буцаж амь нөхнө." }],
+      "Harith": [{ name: "Key Insight (идэвхгүй)", desc: "Ойр байгаа дайсны баатар бүрээс хамаарч хос соролтоо нэмэгдүүлнэ." }, { name: "Synchro Fission (1-р чадвар)", desc: "Өөрийн хуурмаг дүртэйгээ эсрэг чиглэлээс энергийн долгион илгээж, мөргөлдөхөд нь дэлбэрэлт үүсгэнэ." }, { name: "Chrono Dash (2-р чадвар)", desc: "Дайран бамбай авч дараагийн үндсэн довтолгоогоо хүчирхэгжүүлэх бөгөөд оносон үедээ чадварын хүлээлтийг богиносгоно." }, { name: "Zaman Force (супер чадвар)", desc: "Хугацааны рифт үүсгэн дайснуудыг удаашруулж, дотор нь Chrono Dash хэрэглэснээр чадваруудын хүлээлтийг дахин бууруулна." }],
+      "Harley": [{ name: "Magic Master (идэвхгүй)", desc: "Үндсэн довтолгоогоороо шидийн хохирол өгч, дайсны шидийн хамгаалалтыг давхарлан бууруулна." }, { name: "Poker Trick (1-р чадвар)", desc: "Хөзрөө цувуулан шидэж, онов бүрдээ довтолгооны хурдаа түр нэмнэ." }, { name: "Space Escape (2-р чадвар)", desc: "Малгай үлдээн чиглэлд үсэрч хурд авна; дахин хэрэглэвэл малгай дээрээ буцна." }, { name: "Deadly Magic (супер чадвар)", desc: "Дайсны баатрыг галан цагирагт оруулж удаашруулан, хугацаа дуусахад нь авсан хохирлоос нь хамаарсан нэмэлт дэлбэрэлт үүсгэнэ." }],
+      "Hayabusa": [{ name: "Ninjutsu: Trace of Shadow (идэвхгүй)", desc: "Довтолгоо нь дайсанд сүүдрийн тэмдэг хуримтлуулж, тэмдэг бүрийн эсрэг учруулах хохирлыг нэмэгдүүлнэ." }, { name: "Ninjutsu: Phantom Shuriken", desc: "Гурван сюрикэн шидэж буцаан татахдаа дайсныг удаашруулж, нэг байг олон удаа оносноороо эрч хүчээ нөхнө." }, { name: "Ninjutsu: Quad Shadow", desc: "Дөрвөн сүүдэр илгээж, сонгосон сүүдэрт шилжин очих эсвэл дайсанд наалдсан сүүдэр рүү үсрэн хохирол учруулна." }, { name: "Ougi: Shadow Kill", desc: "Сүүдэрт уусан ойрын дайснуудыг олонтаа цавчиж, тэмдэгтэй байг түрүүлэн онилж нэмэлт хохирол өгнө." }],
+      "Helcurt": [{ name: "Shadow of Styx (идэвхгүй)", desc: "Дайсанд илрээгүй үед нуугдан хурдан хөдөлж, гэмтэл учруулахгүй бол амиа нөхөн, илрэхдээ түр хугацаанд дайралт ба хөдөлгөөний хурд авна." }, { name: "Hidden Terror", desc: "Байршил руугаа үсрэн ойр орчмын дайсныг удаашруулж, нуугдмал төлөвт хэрэглэвэл айлгана." }, { name: "Deadly Stinger", desc: "Довтолж эсвэл нуугдмал төлөвт байж хатгуур цуглуулаад бүгдийг урагш шидэн дайснуудад хохирол учруулна." }, { name: "Dark Night Falls", desc: "Харанхуй буулгаж дайснуудын харааг хязгаарлан, бие биеэ харах боломжийг нь хааж, өөрийн хөдөлгөөнийг түргэсгэнэ." }],
+      "Hilda": [{ name: "Blessing of Wilderness (идэвхгүй)", desc: "Өвсөн дунд байхад амиа нөхөж, бутнаас гарах дараагийн цохилтоо хүчтэй болгох бөгөөд дайсанд хуримтлагдах тэмдэг нь хамгаалалтыг нь сулруулна." }, { name: "Combat Ritual", desc: "Хөдөлгөөний хурд болон өөрийн дээд амийн хэмжээнээс хамаарах бамбай авна." }, { name: "Art of Hunting", desc: "Нэг дайсныг түгжин гурван удаа довтолж, сүүлийн цохилтоор бай болон ойр орчмын дайснуудыг түлхэнэ." }, { name: "Power of Wildness", desc: "Дайсан руу үсрэн хүчтэй цавчиж манаргах ба бай дээрх Wilderness Mark бүр хохирлыг нь нэмэгдүүлнэ." }],
+      "Hirara": [{ name: "Twin Fans: Ukifune (идэвхгүй)", desc: "Хоёр зэвсгийн ур чадварыг давхардуулан хосолсон довтолгоо гаргаж болох бөгөөд энэ нь Crimson / Death Energy зарцуулна." }, { name: "Meisen-e", desc: "Давалгаан дээгүүр давхин чиглэлдээ хоёр хүртэл удаа огцом шилжиж, замдаа таарсан дайснуудад цохилт өгнө." }, { name: "Kaerazu", desc: "Сэнс хэлбэрийн талбайд Crimson Maple цацаж, богино хугацааны дараа байршилд дахин хүчтэй цохилт өгнө." }, { name: "Falling Maple / Infernal Torrent", desc: "Хосолсон ур чадвар нь зэвсгийн хослолоос шалтгаалан түр онилогдохгүй цохилт хийх эсвэл дайснуудыг хөдөлгөөнгүй болгох эргэлдсэн довтолгоо гаргана." }],
+      "Hylos": [{ name: "Thickened Blood (идэвхгүй)", desc: "Нэмэлт манаа нь дээд амийг өсгөж, мана дуусахад ур чадвартаа амиа зарцуулна." }, { name: "Law and Order", desc: "Хурд авсны дараах энгийн довтолгоогоор дайсныг түлхэн манаргана." }, { name: "Ring of Punishment", desc: "Эргэн тойрондоо тасралтгүй хохирол учруулж, дайснуудыг удаашруулан довтолгооны хурдыг нь бууруулна." }, { name: "Glorious Pathway", desc: "Чиглэлд зам үүсгэж, холбоотнуудад хурд ба өөртөө амийн нөхөн сэргэлт өгөхийн зэрэгцээ зам дээрх дайснуудыг удаашруулна." }],
+      "Irithel": [{ name: "Jungle Heart (идэвхгүй)", desc: "Морьтойгоо давхиж байхдаа довтолж чаддаг бөгөөд хөдөлгөөнөөрөө дараагийн энгийн довтолгоондоо нэмэлт сум цэнэглэнэ." }, { name: "Strafe", desc: "Сонгосон талбай руу суман бороо буулгаж, дайснуудад хохирол учруулан биеийн хамгаалалтыг нь бууруулна." }, { name: "Force of the Queen", desc: "Лео архирч ойр орчмын дайснуудад хохирол өгч, хөдөлгөөнийг нь удаашруулна." }, { name: "Heavy Crossbow", desc: "Леогоор урагш үсрүүлж, хэсэг хугацаанд хөдөлгөөний хурд болон байг тойрсон хүчтэй суман довтолгоо авна." }],
+      "Ixia": [{ name: "Siphon Starlium (идэвхгүй)", desc: "Довтолгоо, ур чадвар нь Starlium цэнэглэж, цэнэгтэй байг энгийнээр цохиход цэвэр хохирол өгч өөрийн амийг нөхнө." }, { name: "Dual Beam", desc: "Хоёр энергийн цацраг урдаа харваж дайснуудыг удаашруулна; хоёуланд нь оногдсон бай давхар хохирол авна." }, { name: "Star Helix", desc: "Цэнэгтэй бодис шидэж дайснуудыг түлхэн, дараа нь төв шугам руу татан хохирол учруулна." }, { name: "Full Barrage", desc: "Зэвсгээ олон хэсэг болгон дэлгэж, богино хугацаанд урдаа өргөн талбайг энгийн довтолгоо болон ур чадвараараа зэрэг шүршинэ." }],
+      "Jawhead": [{ name: "Mecha Suppression (идэвхгүй)", desc: "Довтолгоо нь бай дээр тэмдэг хуримтлуулж, тэмдэг бүр энгийн довтолгооны хохирлыг нэмэгдүүлнэ." }, { name: "Smart Missiles", desc: "Ойр орчмын дайснууд руу хэд хэдэн пуужин дараалан харвана." }, { name: "Ejector", desc: "Хурд, бамбай авч, дахин ашиглахад хамгийн ойрын нэгжийг сонгосон зүг шидэн дайснуудыг манаргана; холбоотныг гэмтээхгүй." }, { name: "Unstoppable Force", desc: "Дайсны баатар руу хяналтын нөлөөнд авталгүй дайран орж манарган, ойр орчмын дайснуудыг түлхэнэ." }],
+      "Johnson": [{ name: "Electro Airbag (идэвхгүй)", desc: "Амины хувь бага болоход түр хугацааны бамбай үүсгэнэ." }, { name: "Impact Wrench", desc: "Түлхүүрээ шидэж замд нь таарсан дайснуудыг гэмтээн, буусан цэгийн ойр орчмыг манаргана." }, { name: "Electromagnetic Waves", desc: "Бамбайгаа урдаа өргөн дайснуудыг тасралтгүй гэмтээж удаашруулна; давтан оногдох тусам энэ ур чадварын хохирол өснө." }, { name: "Full Throttle", desc: "Машин болж холбоотон авч давхин мөргөлдөхдөө дайснуудыг гэмтээж манаргана; машины хурд мөргөлдөөний хүчийг нэмэгдүүлнэ." }],
+      "Joy": [{ name: "Humph, Joy's Angry! (идэвхгүй)", desc: "Ур чадвар нь миньоноос бусад байг оноход түр хурд авч, тэр байг дахин онох үед нэмэлт шидэт хохирол учруулна." }, { name: "Look, Leonin Crystal!", desc: "Кристал үүсгэн ойр орчмын дайснуудыг удаашруулж, түүнийг дараагийн ур чадвараар үсрэх түшиц болгоно." }, { name: "Meow, Rhythm of Joy!", desc: "Урагш дайран дайсныг онох бүрдээ дахин ашиглах боломжтой; хэмнэлтэй тааруулбал хохирол, бамбайгаа нэмэгдүүлнэ." }, { name: "Ha, Electrifying Beats!", desc: "Beat Energy цуглуулсны дараа ойр орчмын дайснуудыг давтамжтай гэмтээнэ; хэмнэлээ зөв баривал нэмэлт хүч авч, бүрэн цэнэгтэй үедээ удаашралд дархлаатай болно." }],
+      "Julian": [{ name: "Smith's Legacy (идэвхгүй)", desc: "Өөр өөр хоёр ур чадвар хэрэглэсний дараагийн ур чадвар сайжирч, ур чадвараар баатар онох бүрдээ холимог амьд соролт нэмэгдэнэ." }, { name: "Scythe", desc: "Нисдэг хадуур шидэж замд таарсан дайснуудыг удаашруулна; сайжирсан хувилбар нь хадуураа үргэлжлүүлэн нисгэж ойр орчмыг олонтаа гэмтээнэ." }, { name: "Sword", desc: "Нисдэг илднүүдтэй хамт урагш дайран замын дайснуудыг цавчина; сайжирсан үедээ олон цохилт хийх явцдаа онилогдохгүй болно." }, { name: "Chain", desc: "Сонгосон талбайд гинж буулгаж дайснуудыг хөдөлгөөнгүй болгоно; сайжирсан гинж нь үлдсэн дайснуудыг удаашруулж агаарт шиднэ." }],
+      "Kadita": [{ name: "Thalassophobia (идэвхгүй)", desc: "Дайсны баатраас гэмтэл авсны дараа хуримтлагдсан амийнхаа ихэнхийг богино хугацааны дараа нөхөн сэргээнэ." }, { name: "Ocean Ode", desc: "Давалгаагаар урагшилж буцахдаа дайснуудыг удаашруулна; давалгаан дотор хяналтын нөлөөнд дархлаатай, авах хохирол нь буурна." }, { name: "Breath of the Ocean", desc: "Түр хүлээсний дараа сонгосон цэгт давалгаа оргилуулж дайснуудыг агаарт шиднэ." }, { name: "Rough Waves", desc: "Газрын гүнд орж бүх чиглэлд давалгаа илгээн гэмтээж, буцах давалгааар дахин цохино; доор байхдаа онилох боломжгүй болно." }],
+      "Kagura": [{ name: "Yin Yang Gathering (идэвхгүй)", desc: "Шүхрээ буцаан авахад бамбай үүсгэж, ойр орчмын дайснуудыг манарган удаашруулна." }, { name: "Seimei Umbrella Open", desc: "Шүхрээ чиглэлд илгээж замын дайснуудад хохирол учруулан удаашруулна." }, { name: "Rasho Umbrella Flee", desc: "Сөрөг нөлөөгөө арилган шүхрийн байрлал руу шилжиж, ойр орчмын дайснуудад хохирол өгнө." }, { name: "Yin Yang Overturn", desc: "Шүхрийн эргэн тойрны дайснуудад хохирол өгч удаашруулан, богино саатлын дараа төв рүү нь татна." }],
+      "Kaja": [{ name: "Wings of Lightning (идэвхгүй)", desc: "Ур чадварын хохирол нь дайсныг түр удаашруулж, баатар болон дуудагдсан нэгжийн учруулах хохирлыг бууруулна." }, { name: "Ring of Order", desc: "Цахилгаан цагираг үүсгэж тэлүүлэн буцаахдаа дайснуудыг гэмтээж, өөрийн амийг нөхнө." }, { name: "Soaring Wings", desc: "Хяналтын нөлөөнд авталгүй үсэрч газардахдаа дайснуудыг түлхэн манаргаад, саад нэвтлэх нисэх төлөвт орно." }, { name: "Divine Binding", desc: "Цахилгаан гогцоо тавьж бүс дотор үлдсэн баатруудыг хорин, гогцоогоо хөдөлгөн захад байгаа байг өөртэйгөө хамт татна." }],
+      "Kalea": [{ name: "Surge of Life (идэвхгүй)", desc: "Ур чадвар хэрэглэсний дараа усан бүс үүсгэж, бүсэд дахин ур чадвар хэрэглэхэд дараагийн гурван энгийн довтолгоогоо тусгай үр нөлөөтэй болгоно." }, { name: "Wavebreaker", desc: "Газар цохиж давалгаа үүсгэн ойр орчмын дайснуудад хохирол өгч удаашруулна." }, { name: "Tidal Strike", desc: "Урагш дайран эхний дайсны баатрыг агаарт шиднэ; саад эсвэл усан бүсийн ирмэгт тулбал үсрэн бууж дахин цохилт өгч болно." }, { name: "Tsunami Slam", desc: "Дайсны баатрыг сүүлээрээ шүүрэн авч сонгосон зүгт шидэж, бай болон ойр орчимд нь хохирол учруулна." }],
+      "Karina": [{ name: "Shadow Combo (идэвхгүй)", desc: "Нэг байг гурав дахь удаагаа дараалан цохиход амь алдсан хэмжээнээс нь хамаарсан цэвэр хохирол өгч, дайсны баатар бол бусад ур чадварынхаа цэнэглэлтийг түргэсгэнэ." }, { name: "Dance of Blades", desc: "Хөдөлгөөний хурд авч, энгийн довтолгоог хаан ойсон хохирлыг буцаах бөгөөд дараагийн цохилт нь хүчтэй болж байг удаашруулна." }, { name: "Dance of Death", desc: "Эргэн тойрноо эргэлдэн цавчиж ойр орчмын дайснуудад хохирол учруулна." }, { name: "Shadow Assault", desc: "Дайсны баатар руу үсэрч тэмдэглэн сүүдэр үлдээнэ; бай хугацаандаа үхвэл дахин ашиглаж буцан үсэрч болно." }],
+      "Karrie": [{ name: "Lightwheel Mark (идэвхгүй)", desc: "Довтолгоо бүр тэмдэг нэмж, таван тэмдэг хүрэхэд онилсон дайсны дээд амийн хувиар тооцсон цэвэр хохирол өгнө." }, { name: "Spinning Lightwheel", desc: "Энергийн бөмбөлөг шидэж замдаа дайснуудыг гэмтээх ба ойр орчмыг нь удаашруулан цохино." }, { name: "Phantom Step", desc: "Чиглэлд үсрэх зуураа хамгийн ойрын дайсан руу гэрлийн дугуй шидэж хохирол өгч тэмдэг тавина." }, { name: "Speedy Lightwheel", desc: "Хос зэвсгийн төлөвт орж хөдөлгөөнөө түргэсгэн, энгийн довтолгоо бүрээр хоёр гэрлийн дугуй шиднэ." }],
+      "Khaleed": [{ name: "Sand Walk (идэвхгүй)", desc: "Хөдөлгөөнөөр цөлийн хүч цуглуулж, дүүрэхэд элсэн дээгүүр хурдтай гулсан дараагийн довтолгоогоор байг хүчтэй цохиж удаашруулна." }, { name: "Desert Tornado", desc: "Илдээ эргүүлэн ойр орчмын дайснуудыг гэмтээж өөр лүүгээ татах довтолгоог дараалан гурван удаа хийнэ." }, { name: "Quicksand Guard", desc: "Элсэнд түшиглэн амиа нөхөж, авах хохирлоо бууруулах зуур ойр орчмын дайснуудыг удаашруулна; хяналтын нөлөөгөөр тасалдана." }, { name: "Raging Sandstorm", desc: "Элсэн шуургаар сонгосон цэг хүртэл хяналтад авталгүй дайрч, замын дайснуудыг түлхэнэ; буухдаа тэднийг манаргана." }],
+      "Khufra": [{ name: "Spell Curse (идэвхгүй)", desc: "Хяналтын нөлөө тавих бүрдээ идэвхгүй чадварын цэнэглэлтийг богиносгож, сайжирсан энгийн довтолгоогоор байг удаашруулан амиа нөхнө." }, { name: "Tyrant's Revenge", desc: "Боолтоороо урагш харваж замын дайснуудад хохирол өгөөд, хүрэх цэг дээрээ тэднийг агаарт шиднэ." }, { name: "Bouncing Ball", desc: "Бөмбөг болон үсэрч хамгаалалтаа нэмэгдүүлэн ойрын дайснуудыг удаашруулна; дээгүүр нь үсрэх дайсны шилжилтийг агаарт шидэж тасална." }, { name: "Tyrant's Rage", desc: "Ойр орчмын дайснуудыг урдаа татан гэмтээж удаашруулна; хана мөргөсөн дайснууд манарна." }],
+      "Kimmy": [{ name: "Aerial Dominance (идэвхгүй)", desc: "Хөдөлж байхдаа буудаж, онилолтоо тусад нь чиглүүлдэг бөгөөд хурдны нэмэгдэл нь шидэт хүч болж хувирна." }, { name: "Anti-Grav Thruster", desc: "Агаарт хөөрч удаашруулах нөлөөг арилган дархлаатай болохын зэрэгцээ саад нэвтлэн дөрвөн химийн сум шиднэ." }, { name: "Starlium Beam", desc: "Starlium цацраг харваж замд нь таарсан дайснуудыг хөдөлгөөнгүй болгоно." }, { name: "Traction Pulse", desc: "Цэнэгтэй долгион дэлбэлж дайснуудыг удаашруулсан хүчний талбай үүсгээд, удалгүй төв рүү нь татна." }],
+      "Lancelot": [{ name: "Soul Cutter (идэвхгүй)", desc: "Үсрэх эсвэл дайрах бүрдээ хэсэг хугацаанд учруулах хохирлоо давхарлан нэмэгдүүлнэ." }, { name: "Puncture", desc: "Чиглэлд дайран замын эхний тэмдэггүй дайсанд Sword Mark тавина; амжилттай тэмдэглэвэл цэнэглэлт нь сэргэнэ." }, { name: "Thorned Rose", desc: "Гурван удаа дараалан цавчиж, хөдөлгөөнгүй байх зуураа онилох боломжгүй болж, төв хэсгийн дайснуудыг удаашруулна." }, { name: "Phantom Execution", desc: "Богино бэлтгэлийн дараа чиглэлд хүчтэй цавчилт хийж, довтолгооны явцад халдашгүй болно." }],
+      "Lapu-Lapu": [{ name: "Homeland Defender (идэвхгүй)", desc: "Хохирол учруулахдаа Bravery Blessing цуглуулж, дүүрэхэд дараагийн довтолгоо бамбай өгч бай руу ойртон цохино." }, { name: "Justice Blades / Land Shaker", desc: "Хос сэлэмтэй үедээ хоёр буумеранг шидэж, аварга сэлэмтэй үедээ цохилтоо бэлтгэн дайснуудыг удаашруулж манаргана." }, { name: "Jungle Warrior / Storm Sword", desc: "Хос сэлэмтэй үедээ урагш дайрч, аварга сэлэмтэй үедээ эргэн цавчиж дайсны баатруудыг онох бүрдээ авах хохирлоо бууруулна." }, { name: "Bravest Fighter / Raging Slash", desc: "Үсрэн буухдаа аварга сэлэмд шилжиж, дараа нь хяналтад авталгүй өргөн хүрээнд дараалсан гурван цохилт хийнэ." }],
+      "Layla": [{ name: "Malefic Gun (идэвхгүй)", desc: "Дайсан хол байх тусам энгийн довтолгооны хохирол нэмэгдэнэ." }, { name: "Malefic Bomb", desc: "Тэсрэх сум харваж, байг оновол энгийн довтолгоо болон ур чадварын тусгалын зайгаа түр нэмэгдүүлэн хурд авна." }, { name: "Void Projectile", desc: "Энергийн бөмбөлөг дэлбэлж талбайн дайснуудыг гэмтээн тэмдэглэнэ; тэмдэгтэй байг оноход эргэн тойрных нь дайснууд манарна." }, { name: "Destruction Rush", desc: "Энергийн цохилтыг шулуун чиглэлд харваад зогсолтгүй гэмтээх бөгөөд ур чадвараа ахиулахад тусгалын зай нэмэгдэнэ." }],
+      "Leomord": [{ name: "The Oath Keeper (идэвхгүй)", desc: "Ур чадвар болон довтолгоогоор цэнэг цуглуулж дүүргэхэд дараагийн цохилт хүчтэй болж амиа нөхнө; морьтой үед цэнэг хурдан авна." }, { name: "Momentum / Phantom Stomp", desc: "Momentum-оор цохилтоо бэлтгээд чиглэлд илдээрээ дайснуудыг гэмтээн удаашруулна; морьтой үед үсэрч буун цохино." }, { name: "Decimation Assault / Phantom Charge", desc: "Урагш дайран замын дайснуудыг гэмтээн удаашруулна; морьтой үед замын дайснуудыг түлхэнэ." }, { name: "Phantom Steed", desc: "Барбиелийг дуудан дайснуудыг мөргүүлж, уулзахад нь мордсоноор түр хугацаанд хөдөлгөөн, хамгаалалтаа нэмэгдүүлнэ." }],
+      "Lesley": [{ name: "Lethal Shot (идэвхгүй)", desc: "Гэмтэл авахгүй хэсэг байвал дараагийн довтолгоо хол тусаж, крит хийх боломж нь нэмэгдэн энерги нөхнө." }, { name: "Master of Camouflage", desc: "Өөрийгөө далдалж хөдөлгөөн, биеийн довтолгоогоо нэмэгдүүлэх боловч гэмтэл учруулах эсвэл авахад нөлөө дуусна." }, { name: "Tactical Grenade", desc: "Урагш гранат шидэн ухарч, конус хэлбэрийн дайснуудыг түлхэнэ; эцсийн ур чадвараа хэрэглэж байхдаа цуцалж болно." }, { name: "Ultimate Snipe", desc: "Дайсны баатрыг түгжин дөрвөн сум дараалан харвана; бусад дайсан сумыг хааж болох ч идэвхгүй чадвар нь критийн боломжийг нэмэгдүүлнэ." }],
+      "Ling": [{ name: "Cloud Walker (идэвхгүй)", desc: "Ханан дээр байхдаа хөнгөн чанарын цэгээ сэргээж, нэмэлт критийн боломж авдаг ч критийн нэмэгдэл нь буурна." }, { name: "Finch Poise", desc: "Хана руу үсэрч түр далдран хөнгөн чанараа хурдан нөхөж, хурд авна; ханын хооронд шилжихэд цэнэглэлт нь сэргэнэ." }, { name: "Defiant Sword", desc: "Чиглэлд үсрэн илдээр хатгаж дайснуудыг гэмтээн удаашруулна; хананаас хэрэглэвэл довтолгооны үр нөлөөг идэвхжүүлж болно." }, { name: "Tempest of Blades", desc: "Агаарт үсэрч түр халдашгүй болоод буухдаа дайснуудыг гэмтээн төв хэсгийг агаарт шидэж, илдийн талбай үүсгэнэ." }],
+      "Lolita": [{ name: "Noumenon Energy Core (идэвхгүй)", desc: "Noumenon Energy Core үе үе өөртөө болон ойр холбоотнууддаа давхарлаж болох бамбай өгнө." }, { name: "Power Charge", desc: "Чиглэлд огцом шилжиж, дараагийн энгийн довтолгоогоо дайсан руу дайран очих манаргах цохилт болгоно." }, { name: "Guardian's Reflection", desc: "Бамбайгаа өргөн алсын энгийн довтолгоо болон сумыг буцаан ойлгоно." }, { name: "Noumenon Blast", desc: "Цэнэглэх зуураа урд талын дайснуудыг удаашруулж, цэнэгийн хугацаанаас хамаарсан хохирол өгч манаргана." }],
+      "Lukas": [{ name: "Hero's Resolve (идэвхгүй)", desc: "Секунд тутам болон дайсны баатарт хохирол учруулахдаа Resolve хуримтлуулж, Ариун араатны дүрд байхдаа зарцуулна." }, { name: "Flash Combo", desc: "Үндсэн довтолгоогоороо сайжруулж, хуримтлуулсан Vigor-оо зарцуулан цохилтын цуваа гаргаж, дайсныг саатуулж, өөрийгөө эмчилнэ." }, { name: "Flash Step", desc: "Урагш шурган, дараагийн үндсэн довтолгоогоо хүчтэй болгож, цохилтын хүрээ, довтолгооны хурд, хөдөлгөөний хурдыг нэмнэ." }, { name: "Unleash the Beast", desc: "Ариун араатан болон хувирч, үзүүлэлтүүдээ өсгөнө; дахин ашиглавал дайсанд дэлбэрэх долгион харвана." }],
+      "Lunox": [{ name: "Dreamland Twist (идэвхгүй)", desc: "Order хэрэглэвэл шидийн нэвтрэлтийнхээ заримыг шидийн соролт, Chaos хэрэглэвэл соролтынхоо заримыг шидийн нэвтрэлт болгон хувиргана." }, { name: "Starlight Pulse", desc: "Ойр орчмын дайсанд оддын гэрэл буулгаж гэмтээн, буцаж ирэх гэрлээр өөрийгөө эдгээнэ; баатрыг оноход эдгэрэлт нэмэгдэнэ." }, { name: "Chaos Assault", desc: "Дайсан руу эмх замбараагүй энерги шидэж, түүний дээд HP-д тулгуурласан шидийн гэмтэл учруулна." }, { name: "Order & Chaos", desc: "Order хэлбэрээр түр халдашгүй болж ойр хавиа гэмтээнэ, Chaos хэлбэрээр шурган дайрч, Chaos Assault-аа богино хугацаанд хурдан ашиглана." }],
+      "Luo Yi": [{ name: "Duality (идэвхгүй)", desc: "Эсрэг Yin, Yang тэмдэгтэй дайснуудыг мөргөлдүүлж гэмтээн, татаж, саатуулна; шинэ тэмдэг тавихад бамбай, хурд авна." }, { name: "Dispersion", desc: "Ээлжлэн Yin эсвэл Yang энерги цацаж, замдаа таарсан дайснуудад гэмтэл учруулж тэмдэг тавина." }, { name: "Rotation", desc: "Сонгосон газарт энерги үлдээн дайснуудыг удаашруулж, хугацаанд нь давтамжтай гэмтээн, эсрэг тэмдэгтэй урвалыг өдөөдөг." }, { name: "Diversion", desc: "Өөрийн болон ойр байгаа холбоотнуудаа сонгосон байршил руу телепортолж, мөн ур чадварын сэргэлтийг нэмэгдүүлнэ." }],
+      "Lylia": [{ name: "Angry Gloom (идэвхгүй)", desc: "Gloom-ийн ойролцоо байхдаа хурд авна; Gloom сайжрах тусам хурдны нэмэгдэл давхарлана." }, { name: "Magic Shockwave", desc: "Gloom-ийг шулуун илгээж дайснуудыг удаашруулна; замдаа Shadow Energy таарвал дэлбэлнэ." }, { name: "Shadow Energy", desc: "Сонгосон газарт энерги байрлуулж дайснуудыг удаашруулна; Gloom-оор дэлбэлэхэд нэмэлт гэмтэл учруулж, Gloom тийш шилжинэ." }, { name: "Black Shoes", desc: "Дөрвөн секундын өмнөх байршилдаа буцаж, тухайн үеийн HP, мана болон Shadow Energy-гээ сэргээнэ." }],
+      "Marcel": [{ name: "Platinum Snap (идэвхгүй)", desc: "Clemar ойрын дайсны баатруудыг зурагт авч саатуулан гэмтээж, Marcel болон холбоотонд бамбай өгнө." }, { name: "Framed Moment", desc: "Сонгосон бүсийн дайснуудыг удаашруулж, хэсэг саатсаны дараа зураг авч гэмтээнэ." }, { name: "Tracking Shot", desc: "Хөдөлгөөний хурд нэмэгдүүлж, дахин ашиглахад шурган зай аван, анхны байршилд Framed Moment-ийн бүсээ үлдээнэ." }, { name: "Golden Hour", desc: "Том бүсийн нэгжүүд болон сумыг түр хөлдөөж, Marcel-д бүс дотор чөлөөтэй хөдөлж, хөлдсөн дайснуудад нөлөөлөх боломж олгоно." }],
+      "Martis": [{ name: "Asura's Wrath (идэвхгүй)", desc: "Ур чадвар ашиглах бүрт довтолгооны хурд давхарлан нэмэгдэж, дээд давхаргад довтолгооны нэмэлт хүч авна." }, { name: "Asura Aura", desc: "Өмнөх хэсгийн дайснуудыг өөр лүүгээ татан гэмтээж, хөдөлгөөнийг нь удаашруулна." }, { name: "Mortal Coil", desc: "Дараалсан цавчилтаар дайснуудыг гэмтээж, эхний ба сүүлийн цохилтоор түлхэнэ; дахин ашиглан үсэрч агаарт шидэж болно." }, { name: "Decimation", desc: "Сонгосон дайсан руу үсэрч гэмтээнэ; HP багатай байвал жинхэнэ гэмтэл учруулж, устгавал дахин ашиглах боломжтой болно." }],
+      "Masha": [{ name: "Primal Pact (идэвхгүй)", desc: "Гурван HP зурвастай бөгөөд Feral төлөвт орсон үедээ хурд, тэсвэр нэмэгдүүлж, дараагийн цохилтуудаараа дайснаа гэмтээн өөрийгөө нөхөн сэргээнэ." }, { name: "Feral Swipe", desc: "Урагш энерги цацаж, замд таарсан дайснуудыг гэмтээн, баатруудыг удаашруулна." }, { name: "Claw Strike", desc: "Зорьсон чиглэл рүү шурган дайсанд гэмтэл учруулна; HP зурвас дуусахад сэргэлт нь шинэчлэгдэнэ." }, { name: "Savage Maul", desc: "Дайсны баатар руу дайран гэмтээж, саатуулан, ойр орчмын дайснуудыг түлхэнэ." }],
+      "Mathilda": [{ name: "Ancestral Guidance (идэвхгүй)", desc: "Хөдөлгөөнөөрөө цэнэг хуримтлуулж, цэнэг дүүрэхэд дараагийн үндсэн довтолгоогоо хүчтэй болгож, хөдөлгөөний хурд авна." }, { name: "Soul Bloom", desc: "Хөдөлж байхдаа сүнсний гэрлүүд цуглуулж, идэвхжүүлэхэд ойр дайснуудыг онилон гэмтээж, байршлыг нь илчилнэ." }, { name: "Guiding Wind", desc: "Шурган үсэрч өөртөө бамбай авна; бүсэд орсон холбоотонд бамбай өгч, Mathilda руу чиглэн хурдлах боломж олгоно." }, { name: "Circling Eagle", desc: "Дайсныг тэмдэглэн тойрч, дараа нь дайран өнгөрөхдөө дайснуудыг агаарт шидэж гэмтээнэ." }],
+      "Melissa": [{ name: "Doll Buster (идэвхгүй)", desc: "Minion, creep болон дуудагдсан нэгжүүдэд нэмэгдүүлсэн гэмтэл учруулна." }, { name: "Falling!", desc: "Урагш шурган довтолгооны хурд нэмэгдүүлж, Muddles-д цохилт өгөх бүрд ур чадварын сэргэлтийг богиносгоно." }, { name: "Eyes on You!", desc: "Muddles-ийг шидэж дайснуудыг холбоно; холбоотой дайснууд удааширч, Muddles-д өгсөн цохилт дамжин гэмтээнэ." }, { name: "Go Away!", desc: "Хамгаалалтын бүс үүсгэж дайснуудыг түлхэн, дахин оролдохыг нь тасалдуулан, өөрийн хамгаалалтыг нэмэгдүүлнэ." }],
+      "Minotaur": [{ name: "Rage Incarnate (идэвхгүй)", desc: "Ур чадвар бүрийн дараа Motivation авч, дайсны баатрын учруулсан гэмтлийн хэсгээр өөрийгөө эдгээнэ; Enraged төлөвт нөлөө нь нэмэгдэнэ." }, { name: "Despair Stomp", desc: "Байршил руу үсэрч ойр дайснуудыг агаарт шидэн удаашруулна; Enraged үед хүрээ болон гэмтэл нэмэгдэнэ." }, { name: "Motivation Roar", desc: "Өөрийгөө болон хамгийн их шархадсан холбоотныг эдгээнэ; Enraged үед ойр байгаа холбоотнуудыг мөн эмчилнэ." }, { name: "Minoan Fury", desc: "Газар гурван удаа цохиж дайснуудыг гэмтээн, сүүлийн цохилтоор агаарт шиднэ; энэ үед ур чадварынхаа хяналтын нөлөөнд тэсвэртэй болно." }],
+      "Minsitthar": [{ name: "Mark of the King (идэвхгүй)", desc: "Довтолгоо бүр тэмдэг хуримтлуулж, тав дахь тэмдэг дээрх дараагийн цохилт дайсныг саатуулан гэмтээж, Minsitthar-ыг эдгээнэ." }, { name: "Spear of Glory", desc: "Жадаа шидэж дайснуудыг гэмтээнэ; үзүүрт оногдсон баатрыг саатуулж, буцаан татахдаа замын дайснуудыг өөр лүүгээ чирнэ." }, { name: "Shield Assault", desc: "Бамбайгаар дайснуудыг удаашруулж, урдаас авах гэмтлээ багасган, ойр зайны үндсэн довтолгоогоо сайжруулна." }, { name: "King's Calling", desc: "Хааны харуулуудаа дуудан талбай тогтоож, дайснуудыг удаашруулан хөдөлгөөний ур чадвар ашиглахыг нь хориглоно." }],
+      "Miya": [{ name: "Moon Blessing (идэвхгүй)", desc: "Үндсэн довтолгоогоороо довтолгооны хурд давхарлан нэмэгдүүлж, дээд үедээ нэмэлт сүүдэр сум харвана." }, { name: "Moon Arrow", desc: "Хэсэг хугацаанд довтолгоо бүрдээ нэмэлт сум харваж, ойр дайснуудыг давхар гэмтээнэ." }, { name: "Arrow of Eclipse", desc: "Сонгосон бүсэд хүчтэй сум харваж дайснуудыг хөдөлгөөнгүй болгоод, салсан сумнуудаар удаашруулна." }, { name: "Hidden Moonlight", desc: "Өөрийн сөрөг нөлөөг арилган далд болж, хөдөлгөөний хурд авна; далд байдлаас гарахдаа идэвхгүй чадварын цэнэгээ дүүргэнэ." }],
+      "Moskov": [{ name: "Spear of Quiescence (идэвхгүй)", desc: "Үндсэн довтолгоо байг нэвтлэн цаадах дайснуудыг гэмтээж, зарим ур чадварын сэргэлтийг бууруулна." }, { name: "Abyss Walker", desc: "Байршил руу телепортолж довтолгооны хурд нэмэгдүүлэн, үндсэн довтолгоогоороо байны цаадах дайснуудад илүү гэмтэл өгнө." }, { name: "Spear of Misery", desc: "Дайсны баатрыг жадаар түлхэнэ; хананд мөргүүлбэл эсвэл өөр дайсантай мөргөлдвөл саатуулна." }, { name: "Spear of Destruction", desc: "Холын чиглэлд жад шидэж дайснуудыг удаашруулна; баатар оновол сүүдрийн байршил үүсгэж, түүнээс Abyss Walker ашиглана." }],
+      "Nana": [{ name: "Molina's Gift (идэвхгүй)", desc: "Үхлийн гэмтэл авахад сөрөг нөлөөгөө арилган түр халдашгүй болж хурд, HP сэргээнэ; энэ нь хугацаатайгаар дахин идэвхжинэ." }, { name: "Magic Boomerang", desc: "Бумерангаа шидэж, буцах замдаа дайснуудыг гэмтээнэ; олон дайсныг онох тусам гэмтэл буурна." }, { name: "Molina Smooch", desc: "Molina-г дуудаж ойрын дайсны баатрыг хөөлгөн хувиргаж, удаашруулан шидийн хамгаалалтыг нь бууруулна." }, { name: "Molina Blitz", desc: "Сонгосон бүсийг гурван удаа бөмбөгдөж дайснуудыг удаашруулна; дараалсан цохилтод өртсөн дайсан саатна." }],
+      "Natalia": [{ name: "Assassin Instinct (идэвхгүй)", desc: "Бутанд гэмтэл авахгүй хэсэг байхдаа далд болж, дараагийн үндсэн довтолгоогоор байны ард гарч дуугүй болгоно." }, { name: "Claw Dash", desc: "Зорьсон чиглэл рүү дайран замын дайснуудыг гэмтээнэ; дайсан оносон бол дахин ашиглаж болно." }, { name: "Smoke Bomb", desc: "Утаат бөмбөгөөр ойрын дайснуудыг удаашруулж, өөрийгөө үндсэн довтолгооноос түр дархална." }, { name: "The Hunt", desc: "Идэвхгүйгээр критийн магадлалаа нэмэгдүүлж, идэвхжүүлэхэд шууд далд төлөвт орно." }],
+      "Natan": [{ name: "Theory of Everything (идэвхгүй)", desc: "Ур чадвараар дайсанд онох бүрт довтолгооны болон хөдөлгөөний хурд нэмэгдэж, үндсэн довтолгоо буцаж замдаа дайснуудыг гэмтээнэ." }, { name: "Superposition", desc: "Энергийн бөөгнөрөл харваж, замдаа таарсан дайснуудыг гэмтээнэ." }, { name: "Interference!", desc: "Татах хүчний бөмбөлөг илгээж дайснуудыг замдаа чирээд, төгсгөлд нь түлхэн саатуулна." }, { name: "Entropy?", desc: "Урвуу хуулбараа дуудаж өөртэйгөө адил довтлуулна; дахин ашиглахад хуулбартайгаа байраа солино." }],
+      "Nolan": [{ name: "Dimensional Rift (идэвхгүй)", desc: "Ур чадвараар үүсгэсэн ан цавууд дайснуудыг удаашруулж, хоорондоо хүрэхэд тэднийг төв рүү татан гэмтээж, Nolan-д энерги ба эдгэрэлт өгнө." }, { name: "Expansion", desc: "Өмнөх талбайг огтлон дайснуудыг гэмтээж, эхний оногдсон дайсны байрлалд ан цав үүсгэнэ." }, { name: "Gauge", desc: "Зорьсон чиглэл рүү дайран цавчиж, замын дайснуудыг гэмтээн ан цав үлдээнэ." }, { name: "Fracture", desc: "Бүсийг гурвантаа цавчиж ан цав үүсгээд, өөрөө ухран шургана." }],
+      "Novaria": [{ name: "Star Trail (идэвхгүй)", desc: "Дуудсан Astral Sphere-үүд ойр дайснуудыг удаашруулж, байршлыг нь илчилнэ." }, { name: "Astral Meteor", desc: "Байршилд Astral Sphere үүсгэн давтамжтай гэмтээж, дараа нь дэлбэлэн илүү удаашруулна." }, { name: "Astral Recall", desc: "Astral Sphere-ийг өөр рүүгээ татаж, саадыг нэвтрэн хөдөлнө; дараа нь хол харвахад явах зайгаас хамаарч гэмтэл нэмэгдэнэ." }, { name: "Astral Echo", desc: "Дайснуудыг тэмдэглэн удаашруулж, тэдний эргэн тойрныг илчилж, бай онох талбайг нь томруулна." }],
+      "Obsidia": [{ name: "Return to Bone (идэвхгүй)", desc: "Гэмтэл учруулахдаа Bone Energy цуглуулж, Bone Shard үүсгэнэ; үндсэн довтолгоо бүх хэлтэрхийг бай руу харвана." }, { name: "Abyssal Bone Needle", desc: "Ясны зүү харваж дайснуудыг гэмтээнэ; дайсны баатар оносноор идэвхгүй чадварын нөлөөг өдөөдөг." }, { name: "Phantom Shadowmeld", desc: "Ангалд шингэн богино хугацаанд хөдөлгөөний хурд огцом нэмэгдүүлнэ." }, { name: "Hunt of Bone", desc: "Дайсны баатрыг олсоор татан ойртуулж, хөдөлгөөний ур чадварыг нь хаан, Обсидиаг дайсантай хамт хөдөлгөнө." }],
+      "Odette": [{ name: "Lakeshore Ambience (идэвхгүй)", desc: "Ур чадвар бүрийн дараах дараагийн довтолгоо эсвэл ур чадвар дайснуудын хооронд ойж давтамжтай гэмтээнэ." }, { name: "Avian Authority", desc: "Хунгийн ид шидийн цохилтоор дайснуудыг гэмтээн удаашруулна." }, { name: "Blue Nova", desc: "Энергийн бөмбөлөг шидэж эхний дайсныг хөдөлгөөнгүй болгоно; дараагийн бөмбөлөг ойр дайсан руу очно." }, { name: "Swan Song", desc: "Бамбай авч, хөдөлж байхдаа эргэн тойрны дайснуудыг хугацаанд нь давтамжтай гэмтээнэ." }],
+      "Paquito": [{ name: "Champ Stance (идэвхгүй)", desc: "Гурван ур чадвар хэрэглэсний дараа дараагийн ур чадвар нь сайжирч, хэрэглэсний дараа хөдөлгөөний хурд авна." }, { name: "Heavy Left Punch", desc: "Урагш цохиж дайснуудыг гэмтээнэ; баатар оновол бамбай авч, Champ Stance үед цохилт болон бамбай нь нэмэгдэнэ." }, { name: "Jab", desc: "Чиглэлд шурган цохилт өгнө; Champ Stance үед гэмтэл нь нэмэгдэнэ." }, { name: "Knockout Strike", desc: "Тохойгоор цохин дайснуудыг түлхэж, арагшлахдаа удаашруулах цохилт өгнө; Champ Stance үед агаарт шиднэ." }],
+      "Pharsa": [{ name: "Spiritual Unity (идэвхгүй)", desc: "Вэрри тогтмол хугацаанд дараагийн дайралтад тусалж, дайсны HP-д суурилсан нэмэлт гэмтэл учруулан удаашруулна." }, { name: "Curse of Crow", desc: "Сонгосон бүсэд ид шидийн дэлбэрэлт үүсгэн дайснуудыг тэмдэглэнэ; дараагийн дайралт тэмдгийг зарцуулж саатуулна." }, { name: "Energy Impact", desc: "Шулуун чиглэлд ид шидийн энерги цацаж дайснуудыг гэмтээнэ." }, { name: "Feathered Air Strike", desc: "Нисэж байх хугацаандаа сонгосон бүсийг дөрөв хүртэл бөмбөгдөнө; ур чадварын түвшин өсөхөд идэвхгүйгийн хүлээлт багасна." }],
+      "Phoveus": [{ name: "Demonic Force (идэвхгүй)", desc: "Дайсны шургах, дайрах эсвэл түлхэгдэх хөдөлгөөн идэвхжүүлсэн довтолгоог цэнэглэж, ур чадварын сэргэлтийг богиносгоно." }, { name: "Demonic Impact", desc: "Газарт цохиж ойрын дайснуудыг гэмтээн удаашруулна; дараагийн цохилт Astaros Eye үүсгэн дэлбэрнэ." }, { name: "Dark Wave", desc: "Чиглэлд сөрөг энерги гаргаж дайснуудыг агаарт шидэн чирч, гэмтээнэ." }, { name: "Infernal Pursuit", desc: "Тэмдэгтэй дайсан руу үсэрч газарт цохин гэмтээж, өөрийн алдагдсан HP-ээс хамаарч нөхөн сэргээнэ." }],
+      "Popol and Kupa": [{ name: "We Are Friends (идэвхгүй)", desc: "Купа гэмтэл аваагүй үедээ HP-гээ нөхөж, унасан бол Попол хэсэг залбирч буцаан дуудна; Купагийн дайралт Пополын дараагийн цохилтыг хүчтэй болгоно." }, { name: "Bite 'em, Kupa!", desc: "Жадаа шидээд Купаг бай руу довтлуулна; Alpha Wolf хэлбэрт Купа хазалтаараа дайсныг саатуулна." }, { name: "Kupa, Help!", desc: "Купаг дуудаж ойрын дайснуудыг удаашруулан гэмтээж, Пополд бамбай өгнө; Alpha Wolf үед дайснуудыг агаарт шиднэ." }, { name: "We Are Angry!", desc: "Попол, Купа хоёрын хурд, довтолгооны хурдыг нэмэгдүүлж, Купаг Alpha Wolf болгож HP-г нь бүрэн сэргээнэ." }],
+      "Rafaela": [{ name: "Divine Resurrection (идэвхгүй)", desc: "Хугацаатай тусгай үйлдлээр унасан холбоотныг суурин дээр нь сэргээж, дахин төрсний дараа хөдөлгөөний хурд өгнө." }, { name: "Light of Retribution", desc: "Ойрын гурван дайсныг гэмтээн, байршлыг нь илчилж удаашруулна; дахин онох тусам гэмтэл нэмэгдэнэ." }, { name: "Holy Healing", desc: "Ойр холбоотнуудыг эдгээж, хамгийн шархадсан нэг холбоотонд нэмэлт эдгэрэлт өгч, хурд ба удаашралын дархлаа олгоно." }, { name: "Holy Baptism", desc: "Шулуун чиглэлд гэрлийн долгион гарган дайснуудыг гэмтээж саатуулна." }],
+      "Roger": [{ name: "Full Moon Curse (идэвхгүй)", desc: "Хүний дүрд дайсны одоогийн HP, чонын дүрд алдагдсан HP-д нь тулгуурласан нэмэлт гэмтэл учруулна." }, { name: "Open Fire / Lycan Pounce", desc: "Хүний дүрд тор, сумаар дайсныг удаашруулж хамгаалалтыг нь бууруулна; чонын дүрд үсрэн дайснуудыг гэмтээнэ." }, { name: "Hunter's Steps / Bloodthirsty Howl", desc: "Хүний дүрд довтолгооны болон хөдөлгөөний хурд авна; чонын дүрд довтолгооны хурд авч, сул HP-тэй дайсны ойролцоо илүү хурдална." }, { name: "Wolf Transformation / Restore Human Form", desc: "Хүний дүрээс чоно болж дайснуудыг удаашруулна; чонын дүрээс хүн болж шурган бамбай авна." }],
+      "Ruby": [{ name: "Let's Dance! (идэвхгүй)", desc: "Шидийн соролт авч, ур чадварын дараа шурган байрлалаа сольж, хамгаалалтаа давхар нэмэгдүүлнэ." }, { name: "Be Good!", desc: "Хадуураа савж, долгион цацан дайснуудыг гэмтээж удаашруулна." }, { name: "Don't Run, Wolf King!", desc: "Ойр хавьд хоёр удаа савж дайснуудыг гэмтээн саатуулж, өөр лүүгээ татна." }, { name: "I'm Offended!", desc: "Хадуураа өргөн хүрээнд савж дайснуудыг өөр лүүгээ татан гэмтээж саатуулна." }],
+      "Saber": [{ name: "Enemy's Bane (идэвхгүй)", desc: "Түүний довтолгоо дайсны Физик хамгаалалтыг давхарлан бууруулна." }, { name: "Orbiting Swords", desc: "Илднүүдээ эргүүлэн тойруулж, ойр байгаа дайснуудад олон удаа гэмтэл учруулна." }, { name: "Charge", desc: "Урагш хурдлан давхиж, замдаа таарсан дайсанд гэмтэл өгнө." }, { name: "Triple Sweep", desc: "Нэг дайсныг дээш шидэж, агаарт гурван цохилтоор довтолно." }],
+      "Selena": [{ name: "Symbiosis (идэвхгүй)", desc: "Хоёр хэлбэрээ сольж, эльф хэлбэрээр дайсанд тэмдэг тавин, абисс хэлбэрээр тэмдгийг ашиглан нэмэлт ид шидийн гэмтэл өгнө." }, { name: "Abyssal Trap", desc: "Урхи тавьж, өртсөн дайсанд тэмдэг тавин удаашруулж, байрлалыг нь илчилнэ." }, { name: "Abyssal Arrow", desc: "Чиглэлийн сум харваж, туссан дайсныг сум туулсан зайнаас хамааран манаргана." }, { name: "Primal Darkness", desc: "Абисс хэлбэрт шилжиж, ойр дайснуудад гэмтэл учруулахын зэрэгцээ ур чадварыг нь өөрчилнө." }],
+      "Silvanna": [{ name: "Knightess' Resolve (идэвхгүй)", desc: "Довтолгоо, ур чадвараараа дайсанд тэмдэг тавьж, давтан цохих тусам хамгаалалтыг нь сулруулна." }, { name: "Cometic Lance", desc: "Жадаа урагш шидэж, дайсанд тусвал гэмтээж манаргана; дахин ашиглан түүн рүү дайрч болно." }, { name: "Spiral Strangling", desc: "Жадаа урагш сунган дайснуудыг татаж, эргэлтэт олон цохилтоор гэмтээнэ." }, { name: "Imperial Justice", desc: "Зорьсон бүс рүү үсрэн дайснуудыг гэмтээж удаашруулан, нэг байг тойрогт хорьж тулалдана." }],
+      "Sora": [{ name: "Mystic Surge (идэвхгүй)", desc: "Шилжилтийн ур чадвараа ашиглан Аянга эсвэл Урсгалын хүчийг сонгож, дараагийн чадваруудаа хувиргана." }, { name: "Sundering Strike", desc: "Илдээрээ дараалсан цохилт хийж, сонгосон хэлбэрээсээ хамааран дайснаа удаашруулах эсвэл манаргана." }, { name: "Windstride", desc: "Урагш харайж дайснуудад гэмтэл учруулан, сонгосон хэлбэрээсээ хамааран удаашруулах эсвэл агаарт хөөргөнө." }, { name: "Shifting Skies", desc: "Аянгын эсвэл Урсгалын хүчийг сонгож, тэр хэлбэрийн тусгай довтолгоог идэвхжүүлнэ." }],
+      "Sun": [{ name: "Simian God (идэвхгүй)", desc: "Түүний болон хуулбарынх нь довтолгоо дайсны Физик хамгаалалтыг бууруулж, хуулбарын цохилт Sun-ыг эдгээнэ." }, { name: "Endless Variety", desc: "Алтан таягаа шидэж дайсныг гэмтээж удаашруулан, замдаа хуулбар үүсгэнэ." }, { name: "Instantaneous Move", desc: "Урагш хурдлан дайснуудыг цохиж, тэдэнд хүрэхэд хуулбар үүсгэнэ." }, { name: "Clone Techniques", desc: "Өөртэй нь хамт тулалдах хуулбаруудыг дуудаж, довтолгоогоо олшруулна." }],
+      "Suyou": [{ name: "Transient Immortal (идэвхгүй)", desc: "Ур чадвараа товшин эсвэл удаан дарж ашиглахад хэлбэрээ сольж, хөдөлгөөн эсвэл хамгаалалтын давуу тал авна." }, { name: "Blade Surge", desc: "Товшиход зэвсгээ шидэн байрлал руу нь шилжиж цавчина, удаан дарахад урагш дайрч дайснуудыг манаргана." }, { name: "Soul Sever", desc: "Товшиход урдаа цавчиж, удаан дарахад өргөн хүрээг хамарсан хүчтэй цохилт хийнэ." }, { name: "Evil Queller", desc: "Товшиход зэвсгээ савж, удаан дарахад алсаас довтлон дайснуудад их гэмтэл учруулна." }],
+      "Terizla": [{ name: "Body of Smith (идэвхгүй)", desc: "Эрүүл мэнд нь буурах тусам авах гэмтлээ багасгаж, довтолгооны хурдны өсөлтийг Физик довтолгоо болгон хувиргана." }, { name: "Revenge Strike", desc: "Газрыг хагалан дайснуудад гэмтэл учруулж, цохилтын дараа урагш дайрна." }, { name: "Execution Strike", desc: "Алхаа дараалан савж, ойрын дайснуудад олон цохилтоор гэмтэл өгнө." }, { name: "Penalty Zone", desc: "Зорьсон бүсэд үсрэн дайснуудад гэмтэл учруулж, удаашруулан өөр лүүгээ татна." }],
+      "Thamuz": [{ name: "Grand Lord Lava (идэвхгүй)", desc: "Довтолгоо нь лавын дэлбэрэлт үүсгэж жинхэнэ гэмтэл өгдөг бөгөөд хадуургүй үедээ илүү хурдан хөдөлнө." }, { name: "Molten Scythes", desc: "Хадуурнуудаа шидэж дайснуудыг гэмтээнэ; буцаж ирэхэд нь шүүрч аваад довтолгоогоо үргэлжлүүлнэ." }, { name: "Chasm Trample", desc: "Зорьсон газар руу үсрэн бууж, ойр дайснуудад гэмтэл учруулж удаашруулна." }, { name: "Cauterant Inferno", desc: "Лавын хүчээ дэлгэрүүлж, ойр дайснуудад тасралтгүй гэмтэл учруулахын зэрэгцээ цохилтоороо эрүүл мэндээ нөхнө." }],
+      "Tigreal": [{ name: "Fearless (идэвхгүй)", desc: "Ур чадвар ашиглах эсвэл үндсэн довтолгоонд өртөх бүрдээ цэнэг цуглуулж, дүүрэхэд дараагийн үндсэн довтолгоог хаана." }, { name: "Attack Wave", desc: "Газрыг цохиж долгион илгээснээр дайснуудыг гэмтээж удаашруулна." }, { name: "Sacred Hammer", desc: "Урагш дайрч дайснуудыг түлхэнэ; дахин ашиглан газрыг цохиж ойр дайснуудыг агаарт хөөргөнө." }, { name: "Implosion", desc: "Ойр дайснуудыг өөр лүүгээ татаж, хэсэг хугацаанд манаргана." }],
+      "Uranus": [{ name: "Radiance (идэвхгүй)", desc: "Гэмтэл авах болон ур чадвар ашиглахдаа энерги цуглуулж, түүгээрээ эрүүл мэндээ аажмаар нөхнө." }, { name: "Ionic Edge", desc: "Энергийн ирүүдээ тойруулан эргүүлж, дайснуудад гэмтэл учруулан удаашруулна." }, { name: "Transcendent Ward", desc: "Бамбай авч, хөдөлгөөнөө түргэсгэн удаашруулах нөлөөнөөс хамгаална." }, { name: "Consecration", desc: "Биеэсээ сөрөг нөлөөг арилгаж, хөдөлгөөнөө түргэсгэн эрүүл мэндээ нөхөх чадвараа нэмэгдүүлнэ." }],
+      "Vale": [{ name: "Windtalk (идэвхгүй)", desc: "Дайсныг устгах эсвэл туслах бүрдээ хөдөлгөөний хурдны цэнэг авна." }, { name: "Wind Blade", desc: "Зорьсон бүсийн хоёр талаар салхины ир илгээж, дайснуудад ид шидийн гэмтэл учруулна." }, { name: "Windblow", desc: "Салхины хуй салхи илгээж, замд нь таарсан дайснуудыг гэмтээн агаарт хөөргөнө." }, { name: "Windstorm", desc: "Сонгосон бүсэд салхины шуурга дэгдээж, тэнд байгаа дайснуудад ид шидийн гэмтэл учруулна." }],
+      "Valentina": [{ name: "Primal Force (идэвхгүй)", desc: "Дайсны баатарт гэмтэл учруулснаар туршлага цуглуулж, түвшин нь өөрөөс нь өндөр биш дайснаас эрүүл мэнд нөхнө." }, { name: "Shadow Strike", desc: "Сүүдрийн долгион илгээж дайснуудад гэмтэл учруулан удаашруулж, тэмдэг тавина." }, { name: "Arcane Shade", desc: "Урагш шилжин дайснууд руу ид шидийн сум харваж, туссан бүрдээ эхний ур чадварын сэргэлтийг богиносгоно." }, { name: "I Am You", desc: "Зорьсон дайсны эцсийн ур чадварыг хуулж авч, түр хугацаанд түүний хэлбэрээр тулалдана." }],
+      "Valir": [{ name: "Ashing (идэвхгүй)", desc: "Ур чадварын дөл дайсанд шаталтын цэнэг хуримтлуулж, хангалттай цэнэгтэй байг дэлбэлж манаргана." }, { name: "Burst Fireball", desc: "Галт бөмбөлөг шидэж дайснуудыг гэмтээн удаашруулна; бүрэн шатсан байг оноход дахин ашиглах боломжтой болно." }, { name: "Searing Torrent", desc: "Урагш гал үлээн дайснуудад гэмтэл учруулж, өөрөөсөө түлхэн холдуулна." }, { name: "Vengeance Flame", desc: "Өөрт буй хяналтын нөлөөг арилгаж, дөлөө хүчирхэгжүүлэн бусад ур чадвараа сайжруулна." }],
+      "Vexana": [{ name: "Nether Touch (идэвхгүй)", desc: "Түүний болон харуулынх нь довтолгоонд өртсөн дайсан үхэхдээ ойр орчмоо дэлбэрүүлэн гэмтээнэ." }, { name: "Deathly Grasp", desc: "Сүнслэг гар илгээж дайснуудыг гэмтээн, айлгаж түлхэхэд ойр хавийн дайснууд ч мөн цочирдоно." }, { name: "Cursed Blast", desc: "Зорьсон бүсийг харааж, богино саатлын дараа доторх дайснуудыг ид шидээр гэмтээнэ." }, { name: "Eternal Guard", desc: "Сүнслэг харуул дуудаж, дайснуудад гэмтэл учруулан тулалдаанд туслуулна." }],
+      "Wanwan": [{ name: "Tiger Pace (идэвхгүй)", desc: "Дайснуудын сул талыг илрүүлж, бүх тэмдэглэгээг нь оноход тэднийг үндсэн довтолгоогоороо онилж чадна." }, { name: "Swallow's Path", desc: "Залгидаг зэвсгээ шидэж дайснуудыг гэмтээн тэмдэг тавиад буцаан татна." }, { name: "Needles in Flowers", desc: "Өөрт буй хяналтын нөлөөг арилгаж, эргэн тойрондоо зүү цацан дайснуудад гэмтэл өгнө." }, { name: "Crossbow of Tang", desc: "Тэмдэглэгээг нь бүрэн онох үед дайсныг агаарт хөөргөн, завсрын бай руу суман довтолгоогоо үргэлжлүүлнэ." }],
+      "X.Borg": [{ name: "Firaga Armor (идэвхгүй)", desc: "Хуяг нь ирэх гэмтлийг шингээдэг бөгөөд эвдрэхэд X.Borg түр зуур хуяггүй болж, энергиэ цуглуулан сэргээнэ." }, { name: "Fire Missiles", desc: "Урагш гал цацаж дайснуудад гэмтэл өгч, халууныг нь нэмэгдүүлнэ." }, { name: "Fire Stake", desc: "Гадаснуудыг дэлгэн байрлуулж буцаан татахдаа замын дайснуудыг гэмтээнэ." }, { name: "Last Insanity", desc: "Эргэн тойрондоо гал цацан урагш дайрч, төгсгөлд нь дэлбэрч их хэмжээний гэмтэл учруулна." }],
+      "Xavier": [{ name: "Transcendence (идэвхгүй)", desc: "Ур чадвараараа дайсны баатрыг онох тусам дараагийн чадварууд нь үе шаттайгаар хүчирхэгжинэ." }, { name: "Infinite Extension", desc: "Ид шидийн сум харваж, дайсан эсвэл хаалт мөргөх бүрдээ нисэх зайгаа уртасгана." }, { name: "Mystic Field", desc: "Дайснуудыг удаашруулж, холбоотнуудын хөдөлгөөнийг түргэсгэх ид шидийн хаалт үүсгэнэ." }, { name: "Dawning Light", desc: "Талбайг бүхэлд нь нэвтлэх гэрлийн туяагаар дайснуудыг гэмтээнэ." }],
+      "Yi Sun-shin": [{ name: "Heavenly Vow (идэвхгүй)", desc: "Байнаасаа зайнаас хамааран нум, жадаа сольж, зэвсэг солих бүрдээ дараагийн хоёр довтолгоогоо хүчжүүлнэ." }, { name: "Traceless", desc: "Урагш дайран замын дайснуудыг гэмтээж, дайралтынхаа дараа зэвсгээ сольж давуу цохилт хийнэ." }, { name: "Blood Floods", desc: "Нумаа татаж хүч цуглуулаад сум харваж, замын дайснуудыг гэмтээн удаашруулна." }, { name: "Mountain Shocker", desc: "Газрын зураг даяар гурван давлагаат цохилт илгээж, дайснуудыг илрүүлэн гэмтээнэ." }],
+      "Yin": [{ name: "Leave It to Me (идэвхгүй)", desc: "Ойр хавьд холбоотонгүй үед дайсанд учруулах гэмтэл нь нэмэгдэнэ." }, { name: "Charged Punch", desc: "Урагш хүчтэй нударч, дайсныг агаарт хөөргөнө." }, { name: "Instant Blast", desc: "Урагш дайрч, эргэн тойрондоо дараалсан цохилт хийгээд төгсгөлд нь байг манаргана." }, { name: "My Turn", desc: "Нэг дайсныг өөрийн орон зайд татан оруулж, ганцаар тулалдах хугацаанд хүчээ нэмэгдүүлнэ." }],
+      "Yu Zhong": [{ name: "Cursing Touch (идэвхгүй)", desc: "Дайсанд тэмдэг тавьж, цэнэг нь бүрдэхэд тэсрэлт үүсгэн өөрийгөө эдгээж, хөдөлгөөнийг нэмэгдүүлнэ." }, { name: "Dragon Tail", desc: "Нөмрөгөө тойруулан савж, захын хэсгээрээ илүү хүчтэй цохилт хийнэ." }, { name: "Soul Grip", desc: "Урдаа лууны хүч илгээж дайснуудыг удаашруулаад, дараагийн үндсэн довтолгоогоо хүчжүүлнэ." }, { name: "Black Dragon Form", desc: "Хар луу болон хувирч нисэхдээ дайснуудыг түлхэн, дараа нь луу-хүн хэлбэрт шилжинэ." }],
+      "Yve": [{ name: "Galactic Power (идэвхгүй)", desc: "Ур чадвараараа дайсныг онох бүрдээ галактикийн цэнэг цуглуулж, эцсийн чадвараа хүчжүүлнэ." }, { name: "Void Blast", desc: "Зорьсон бүсэд хоосон орон зайн дэлбэрэлт үүсгэж, дайснуудыг гэмтээнэ." }, { name: "Void Crystal", desc: "Кристал байрлуулж, түүнийг чиглүүлэхдээ дайснуудыг гэмтээн удаашруулна." }, { name: "Real World Manipulation", desc: "Том талбайд оддын самбар үүсгэн, сонгосон хэсгүүдээр дайснуудыг гэмтээж эсвэл удаашруулна." }],
+      "Zetian": [{ name: "Celestial Armament (идэвхгүй)", desc: "Ур чадвараар баатар оноход ид шидийн соролт цуглуулж, ойртсон дайсныг түлхэн манаргах бамбайтай болно." }, { name: "Phoenix Strike", desc: "Дараалсан галт долгион илгээж дайснуудыг гэмтээх ба сүүлчийн цохилт нь тэднийг төв рүү татна." }, { name: "Phoenix Descent", desc: "Феникс дуудан бүс доторх дайснуудыг удаашруулж, үргэлжилсэн гэмтэл өгнө." }, { name: "Fury of the Phoenix", desc: "Дайсны бүх баатрыг илрүүлж гэмтээн манаргахын зэрэгцээ холбоотнуудын хөдөлгөөнийг түргэсгэнэ." }],
+      "Zhask": [{ name: "Decimation (идэвхгүй)", desc: "Үхэх үедээ сүйрлийн энерги дэлбэлж, ойр байгаа дайснуудад гэмтэл учруулна." }, { name: "Nightmaric Spawn", desc: "Дайснууд руу автоматаар довтлох хар дарсан зүүдний үүрийг байрлуулна." }, { name: "Mind Eater", desc: "Урагш ид шидийн энерги цацаж, үүрээ мөн дайруулан дайснуудыг гэмтээнэ." }, { name: "Hive Clones", desc: "Дайсныг удаашруулдаг жижиг хуулбаруудыг чиглэлд нь цацна." }],
+      "Zhuxin": [{ name: "Crimson Butterflies (идэвхгүй)", desc: "Дэнлүүний чадварт зарцуулсан манаг эрвээхэй болгон хуримтлуулж, чадвараа зогсооход манагийнхаа хэсгийг буцаан авна." }, { name: "Fluttering Grace", desc: "Өмнөх хэсгийн дайснуудыг гэмтээн удаашруулж, өөрийн хөдөлгөөнийг түргэсгэнэ." }, { name: "Lantern Flare", desc: "Дэнлүүгээ удирдан дайснуудыг тасралтгүй гэмтээж, цэнэг нь бүрдэхэд агаарт шиднэ." }, { name: "Crimson Beacon", desc: "Бамбайтайгаар байрлалаа сольж, эргэн тойронд нь дайсанд тэмдэг тавих бүс үүсгэнэ." }],
+      "Zilong": [{ name: "Dragon Flurry (идэвхгүй)", desc: "Хэд хэдэн үндсэн довтолгоо тутамд дараалсан цохилт хийж, өөрийн эрүүл мэндийг нөхнө." }, { name: "Spear Flip", desc: "Дайсныг дээгүүрээ давуулан шидэж, арагш нь буулгана." }, { name: "Spear Strike", desc: "Зорьсон дайсан руу үсрэн хүрч, гэмтэл учруулан удаашруулна." }, { name: "Supreme Warrior", desc: "Удаашруулах нөлөөг арилгаж, хөдөлгөөн болон довтолгооны хурдыг нь нэмэгдүүлнэ." }]
+    };
+
+    // ===== Цус болон үеийн ерөнхий үнэлгээ =====
+    const hpNames = ["", "Маш бага", "Бага", "Дунд", "Өндөр", "Маш өндөр"];
+    const baseHp = { Tank: 5, Fighter: 4, Support: 3, Assassin: 3, Mage: 3, Marksman: 2 };
+    const baseStage = {          // [эхэн, дунд, төгсгөл]
+      Tank: [3, 4, 4],
+      Fighter: [4, 4, 3],
+      Assassin: [4, 4, 3],
+      Mage: [3, 4, 4],
+      Marksman: [2, 3, 5],
+      Support: [3, 3, 3]
+    };
+    function stars(n) { return "★".repeat(n) + "☆".repeat(5 - n); }
+    function clamp(v) { return Math.min(5, Math.max(1, v)); }
+
+    function getHp(h) {
+      let v = baseHp[h.roles[0]];
+      if (h.tags.includes("s")) v--;
+      if (h.tags.includes("t")) v++;
+      return clamp(v);
+    }
+    function getStages(h) {
+      let [a, b, c] = baseStage[h.roles[0]];
+      if (h.tags.includes("e")) { a--; c++; }
+      return [clamp(a), clamp(b), clamp(c)];
+    }
+
+    // ===== Нэр томьёоны толь =====
+    const glossary = {
+      "Jungle": "Ширэнгэ",
+      "Jungler": "Ширэнгэд тоглогч",
+      "Gold lane": "Алтны зам",
+      "Mid lane": "Дунд зам",
+      "EXP lane": "Туршлагын зам",
+      "Lane": "Зам",
+      "Minion": "Дайчин (жижиг цэрэг)",
+      "Tower": "Цамхаг",
+      "Turtle": "Яст мэлхий (том мангас)",
+      "Lord": "Лорд (том мангас)",
+      "Item": "Баатарт нэмэлт хүч, хамгаалалт өгдөг худалдан авах хэрэгсэл",
+      "Tank": "Хамгаалагч",
+      "Fighter": "Тулаанч",
+      "Assassin": "Алуурчин",
+      "Mage": "Илбэчин",
+      "Marksman": "Харваач",
+      "Support": "Дэмжигч",
+      "Ultimate": "Хамгийн хүчтэй чадвар",
+      "Passive": "Байнгын чадвар",
+      "Stun": "Саатуулах (хөдөлгөөнгүй болгох)",
+      "Slow": "Удаашруулах",
+      "Early game": "Тоглоомын эхэн үе",
+      "Late game": "Тоглолтын төгсгөл үе",
+      "Meta": "Одоогийн хамгийн хүчтэй сонголтууд",
+      "Win rate": "Хожлын хувь",
+      "Role": "Үүрэг",
+      "Joystick": "Хөдөлгөөний товч",
+      "HP": "Эрүүл мэнд"
+    };
+
+    function renderGlossary() {
+      const q = document.getElementById("termSearch").value.toLowerCase();
+      document.getElementById("glossaryList").innerHTML = Object.keys(glossary)
+        .filter(k => k.toLowerCase().includes(q) || glossary[k].toLowerCase().includes(q))
+        .sort()
+        .map(k => `<div class="card"><b style="color:#38bdf8">${k}</b><br>${glossary[k]}</div>`)
+        .join("");
+    }
+
+    // ===== Баатруудыг бэлтгэх =====
+    const heroes = heroList.map(line => {
+      const [name, roles, tags] = line.split("|");
+      return { name, roles: roles.split(","), tags };
+    });
+    heroes.sort((a, b) => a.name.localeCompare(b.name));
+
+    function readFavoriteHeroes() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("ml-favorite-heroes") || "[]");
+        return Array.isArray(saved) ? saved.filter(name => heroes.some(hero => hero.name === name)) : [];
+      } catch (error) {
+        console.error("Дуртай баатруудыг уншиж чадсангүй:", error);
+        return [];
+      }
+    }
+    const favoriteHeroes = new Set(readFavoriteHeroes());
+    function saveFavoriteHeroes() {
+      try {
+        localStorage.setItem("ml-favorite-heroes", JSON.stringify([...favoriteHeroes]));
+      } catch (error) {
+        console.error("Дуртай баатруудыг хадгалж чадсангүй:", error);
+      }
+    }
+    function updateFavoritesCount() {
+      const count = document.getElementById("favoritesCount");
+      if (count) count.textContent = `⭐ Дуртай: ${favoriteHeroes.size} баатар`;
+    }
+    function toggleFavorite(name) {
+      if (favoriteHeroes.has(name)) favoriteHeroes.delete(name);
+      else favoriteHeroes.add(name);
+      saveFavoriteHeroes();
+      updateFavoritesCount();
+      filterHeroes(currentRole);
+    }
+    document.getElementById("heroList").addEventListener("click", event => {
+      const button = event.target.closest("[data-favorite]");
+      if (button) toggleFavorite(button.dataset.favorite);
+    });
+
+    function pick(tags, table, fallback) {
+      const parts = [];
+      for (const t of tags) { if (table[t] && parts.length < 2) parts.push(table[t]); }
+      return parts.length ? parts.join(" ") : fallback;
+    }
+    function slug(name) {
+      return name.toLowerCase().replace(/'/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+    let currentRole = "all";
+
+    function filterHeroes(role) {
+      currentRole = role;
+      const search = document.getElementById("heroSearch").value.toLowerCase();
+      let shown = heroes.filter(h =>
+        (role === "favorites" ? favoriteHeroes.has(h.name) :
+          role === "all" || role === "meta" || h.roles.includes(role)) &&
+        h.name.toLowerCase().includes(search)
+      );
+      if (role === "meta") {
+        shown = shown.filter(h => metaTier[h.name])
+                     .sort((a, b) => metaTier[a.name] - metaTier[b.name]);
+      }
+
+      const list = document.getElementById("heroList");
+
+      if (role === "meta") {
+        const rows = shown.map((h, index) => {
+          const stats = metaStats[h.name];
+          const badgeClass = ["yellow", "blue", "green", "red", "purple", "gray", "orange", "indigo"][index % 8];
+          const initials = h.name.split(/\s+/).map(part => part[0]).slice(0, 2).join("").toUpperCase();
+          const counterPicks = (stats ? stats.counters : []).map(counter => {
+            return `
+              <div class="counter-pick">
+                <strong>${counter.name}</strong>
+                <small>${counter.use}</small>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <tr>
+              <td class="meta-rank"><span class="meta-rank-badge">${metaTier[h.name]}</span></td>
+              <td>
+                <div class="meta-hero">
+                  <span class="meta-avatar ${badgeClass}">${initials}</span>
+                  <span class="meta-name">${h.name}</span>
+                </div>
+              </td>
+              <td class="meta-metric">${stats.pick}</td>
+              <td class="meta-metric">${stats.win}</td>
+              <td class="meta-metric">${stats.ban}</td>
+              <td>
+                <div class="meta-counter">${counterPicks}</div>
+                <div class="counter-note">Эдгээр баатар тодорхой нөхцөлд давуу сонголт байж болно. Багийн бүрэлдэхүүндээ тохируулан сонгоорой.</div>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        list.innerHTML = `
+          <div class="meta-table-wrap">
+          <table class="meta-table">
+            <thead>
+              <tr>
+                <th>Байр</th>
+                <th>Баатар</th>
+                <th>Сонгосон хувь</th>
+                <th>Хожлын хувь</th>
+                <th>Хориглосон хувь</th>
+                <th>Эсрэг сонголт</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          </div>
+        `;
+        document.getElementById("heroCount").textContent = "Мета жагсаалт: " + shown.length + " баатар";
+        return;
+      }
+
+      if (!shown.length) {
+        list.innerHTML = `<div class="empty-state">${role === "favorites" && !favoriteHeroes.size
+          ? "Одоогоор дуртай баатар алга. Баатрын карт дээрх ☆ товчийг дарж хадгалаарай."
+          : "Тохирох баатар олдсонгүй. Хайлтаа өөрчилж үзээрэй."}</div>`;
+        document.getElementById("heroCount").textContent = role === "favorites" ? "Дуртай баатар: 0" : "Баатар олдсонгүй";
+        return;
+      }
+
+      list.innerHTML = shown.map(h => {
+        const details = heroDetails[h.name] || {};
+        const d = { ...details, skills: heroSkills[h.name] || details.skills || [] };
+        const main = h.roles[0];
+        const hp = d.hp || getHp(h);
+        const st = d.stages || getStages(h);
+        const m = metaTier[h.name];
+
+        const skillContent = d.skills
+          ? `<ul>${d.skills.map(s => `<li><b>${s.name}:</b> ${s.desc}</li>`).join("")}</ul>`
+          : `<p class="note">Энэ баатрын чадварын тайлбар одоогоор энд нэмэгдээгүй байна.</p>`;
+        const skillsHtml = `
+          <details class="skill-panel" ${d.skills ? "open" : ""}>
+            <summary>Чадварын тайлбар</summary>
+            ${skillContent}
+          </details>
+        `;
+        const metaHtml = m
+          ? `<p><b>Мета:</b> <span class="role" style="background:#f87171">Топ ${m}</span> одоогийн мета</p>`
+          : "";
+        const isFavorite = favoriteHeroes.has(h.name);
+
+        return `
+          <div class="card">
+            <button type="button" class="favorite-button ${isFavorite ? "is-favorite" : ""}"
+                    data-favorite="${h.name}" aria-pressed="${isFavorite}"
+                    aria-label="${isFavorite ? "Дуртайгаас хасах" : "Дуртайд нэмэх"}: ${h.name}"
+                    title="${isFavorite ? "Дуртайгаас хасах" : "Дуртайд нэмэх"}">${isFavorite ? "★" : "☆"}</button>
+            <h3>${h.name}</h3>
+            ${h.roles.map(r => `<span class="role">${r}</span>`).join("")}
+            ${metaHtml}
+            <p><b>HP:</b> <span class="stars">${stars(hp)}</span> ${hpNames[hp]}</p>
+            <p><b>Тоглолтын үе шат:</b><br>
+               <b>Эхлэл:</b> <span class="stars">${stars(st[0])}</span><br>
+               <b>Дунд үе:</b> <span class="stars">${stars(st[1])}</span><br>
+               <b>Төгсгөл:</b> <span class="stars">${stars(st[2])}</span></p>
+            <p class="note">* Үнэлгээг баатрын үүрэг, онцлогт тулгуурлан ерөнхий байдлаар гаргав.</p>
+            <p><b>Яаж тоглох:</b> ${d.howTo || howToRole[main]}</p>
+            ${skillsHtml}
+            <p><b>Тоглолтын төгсгөлд:</b> ${d.late || pick(h.tags, lateByTag, lateFallback[main])}</p>
+            <p><b>Аюул:</b> ${d.danger || pick(h.tags, dangerByTag, dangerFallback[main])}</p>
+          </div>`;
+      }).join("");
+
+      document.getElementById("heroCount").textContent =
+        (role === "favorites" ? "Дуртай баатрууд: " : "Нийт ") + shown.length + " баатар";
+    }
+
+    function showHero(name) {
+      document.getElementById("heroSearch").value = name;
+      filterHeroes("all");
+      document.getElementById("heroes").scrollIntoView({ behavior: "smooth" });
+      document.querySelector("#heroList .card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    function showRandomHero() {
+      const hero = heroes[Math.floor(Math.random() * heroes.length)];
+      showHero(hero.name);
+    }
+
+    const matchPlans = {
+      Tank: {
+        early: "Замынхаа тоглогчийг хамгаалж, бут сөөгийг аюулгүй шалга. Багийн хохирол учруулагчдаас хол бүү тасар.",
+        mid: "Багийнхаа урд байрлаж, дайсны чадварыг өөр дээрээ тат. Том мангасын өмнө хамтрагчдаа цуглуул.",
+        late: "Ганцаараа дайрч эхлэхээс зайлсхий. Эмзэг хамтрагчаа хамгаалж, багийн дайралтыг хамт эхлүүл."
+      },
+      Fighter: {
+        early: "Туршлага, алт цуглуулахдаа эрсдэлтэй тулаанаас зайлсхий. Боломжтой үед дайсныг замаасаа шах.",
+        mid: "Хажуугийн замд дарамт үзүүлээд, багийн тулаан эхлэхэд хамтрагчдаа нийл.",
+        late: "Дайсны арын эгнээнд хүрэх боломжийг хүлээ. Хамгаалалт, довтолгоогоо нөхцөлд тааруул."
+      },
+      Assassin: {
+        early: "Ширэнгийн нөөцөө цагт нь цуглуулж, дайсны байрлалыг ажигла. Боломжгүй дайралтад чадвараа бүү үр.",
+        mid: "Багийнхаа саатуулах чадвартай уялдуулж, хамгаалалт сул байг онил.",
+        late: "Дайсны хяналтын чадвар ашиглагдсаны дараа ор. Довтолсны дараах гарах замаа урьдчилан тооц."
+      },
+      Mage: {
+        early: "Чадвараараа замаа цэвэрлээд, жижиг газрын зургийг шалган бусад замд тусал.",
+        mid: "Багийн тулаанаас өмнө дайсанд хохирол өг. Чадварынхаа хүрээ болон сэргэлтийн хугацааг ашигла.",
+        late: "Багийнхаа ард байрлаж, дайсны бөөгнөрөлд чадвараа чиглүүл. Ганцаараа харагдахаас болгоомжил."
+      },
+      Marksman: {
+        early: "Алт, жижиг цэрэгт төвлөр. Аюултай дайсан харагдахгүй үед цамхгаасаа хол бүү яв.",
+        mid: "Хамгаалагчтайгаа ойр байж, аюулгүй үед цамхаг болон том зорилтод хохирол өг.",
+        late: "Хамгийн ойр аюулгүй байг довтол. Багийнхаа урд бүү гар; байрлалаа байнга өөрчил."
+      },
+      Support: {
+        early: "Замын хамтрагчаа хамгаалж, хэрэгтэй үед бусад замд тусал. Газрын зургаа тогтмол ажигла.",
+        mid: "Эмчилгээ, бамбай, саатуулах чадвараа багийн гол хохирол учруулагчид зориул.",
+        late: "Багийнхаа гол байтай хамт яв. Тулааныг өөрөө ганцаараа эхлүүлэхээс зайлсхий."
+      }
+    };
+    function buildMatchPlan() {
+      const role = document.getElementById("planRole").value;
+      const phase = document.getElementById("planPhase").value;
+      const phaseNames = { early: "Эхлэл", mid: "Дунд үе", late: "Төгсгөл" };
+      const plan = matchPlans[role]?.[phase];
+      if (!plan) {
+        console.error("Тоглолтын төлөвлөгөө олдсонгүй:", { role, phase });
+        return;
+      }
+      document.getElementById("planResult").innerHTML =
+        `<strong>${role} · ${phaseNames[phase]}:</strong> ${plan}`;
+    }
+
+    const patchUpdates = [
+      { hero: "Bruno", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын үндсэн хохирол 100–225 → 75–150 болсон. 2-р чадварын цохилтын хохирол хасагдаж, манаргалт 0.5 → 0.1 сек болж богиноссон, сэргэлт 7 → 9–7 сек, мана зарцуулалт 60 → 90 болсон. Ultimate-ийн хуяг бууруулалт хасагдаж, хохирол буурсан; сэргэлт 74–62 → 90–66 сек болж уртассан." },
+      { hero: "Aulus", mode: "main", modeLabel: "Үндсэн тоглолт", change: "Ultimate-ийн эхний 4 цохилтын суурь хохирол 150–270 → 110–270, сүүлийн цавчилтынх 450–810 → 330–810 болсон. Довтолгооны хурдны өсөлт 2.5% → 2%; 2-р чадварын сэргэлт 7 → 10–8 сек." },
+      { hero: "Argus", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Ultimate-ийн сэргэлт 42–35 → 45 сек болж уртассан. Идэвхгүй чадварын шүүмжлэлт цохилт нэмэлт цохилт үүсгэхээр өөрчлөгдөж, 2-р чадвар өөрөө шүүмжлэлт цохилт хийхээ больсон." },
+      { hero: "Aldous", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Идэвхгүй чадварын бамбай 500 → 350 болсон. Цуглуулсан давхарга бүрийн нэмэлт хохирол 5 → 3; 2-р чадварын хөдөлгөөний хурдны нэмэгдэл хасагдсан." },
+      { hero: "Lukas", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Ultimate ашиглах үеийн Resolve нөхөн сэргээлт 1–2 → 0.5–2 болсон. 1-р чадварын эргэлдэх цохилтын хохирол 100–200 → 80–180; 2-р чадварын дараах аянгын хохирол нэг удаа л өгөхөөр өөрчлөгдсөн." },
+      { hero: "Classic Zilong", mode: "classic", modeLabel: "Зөвхөн Classic горим", change: "Идэвхгүй чадварын хүчтэй үндсэн цохилтын хохирол 450 (+150% нийт физик довтолгоо) → 360 (+120%) болсон. Ultimate-ийн сэргэлт 35–27 сек → 43–35 сек болж уртассан." },
+      { hero: "Odette", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Ultimate үеийн идэвхгүй дууны долгионы үсрэх хурд, давтамжийн нэмэгдэл хасагдсан. Ultimate-ийн хоёр дахь идэвхжүүлэлт байхгүй болсон." },
+      { hero: "Sun", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Хувилангийн HP нөхөлт 25% → 15% болж буурсан. Хувилбар өөрөө 60% хохирол өгч, 150% хохирол авдаг болсон; алахад өгөх алт багассан." },
+      { hero: "Marcel", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "1-р чадварын суурь хохирол 350–700 → 300–650 болсон. 1, 2-р чадварын сэргэлт 12.5–10 → 15–12 сек; ultimate-ийн сэргэлт 74–62 → 90–66 сек болж уртассан." },
+      { hero: "Kadita", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Үндсэн хөдөлгөөний хурд 250 → 240 болсон." },
+      { hero: "Alpha", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Идэвхгүй чадварын лазерын хохирлын өсөлт 80% нэмэлт физик довтолгооноос 50% нийт физик довтолгоо болгон өөрчлөгдсөн; энэ нь зарим build-д хохирлыг багасгаж болно." },
+      { hero: "Edith", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Ultimate-ийн түлхэлт ойр орчмын дайсанд өгөх хохирлыг алдсан." },
+      { hero: "Melissa", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын довтолгооны хурдны нэмэгдэл 50–75% → 30–55%, үргэлжлэх хугацаа 3 → 2.5 сек. 2-р чадварын Muddles дамжуулах хохирол болон нэмэлт нөлөө дамжуулах хувь 60/80% → 52% болсон." },
+      { hero: "Miya", mode: "main", modeLabel: "Үндсэн тоглолт", change: "Идэвхгүй чадварын сүүдэр сумны хохирол 30 (+25% нийт физик довтолгоо) → 25 (+20%) болсон." },
+      { hero: "Hanabi", mode: "main", modeLabel: "Үндсэн тоглолт", change: "Үндсэн довтолгоо эсвэл чадварын үсэрсэн сум нэг байг дараалан онох үед дараагийн үсрэлтүүд 30% бага хохирол өгнө." },
+      { hero: "Yi Sun-shin", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын сэргэлт дээд түвшинд 7 → 9 сек болж уртассан (түвшнээс хамааран 12–7 → 12–9 сек)." },
+      { hero: "Paquito", mode: "main", modeLabel: "Үндсэн тоглолт", change: "Хүчирхэгжүүлсэн 2-р чадварын эхний үеийн суурь хохирол 350–750 → 300–800 болсон; довтолгооны нэмэгдэл 230% → 210% болсон. Эхлэл, дунд үеийн огцом хохирол багасна." },
+      { hero: "Edith", mode: "honor", modeLabel: "Зөвхөн Mythical Honor Battlefield", change: "Энэ горим дахь чадварын үзүүлэлтийг үндсэн тоглолтынхтой адилтгасан." },
+      { hero: "Dyrroth", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Нэмэлт хохирол +14% → +8%; авах хохирлын бууралт −10% → −6% болсон." },
+      { hero: "Barats", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын нэмэгдэл +2% → +10% болсон." },
+      { hero: "Sora", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын нэмэгдэл +6% → +12% болсон." },
+      { hero: "Hanabi", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын нэмэгдэл +18% → +20% болсон." },
+      { hero: "Martis", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын +6% шинэ нэмэгдэл орсон." },
+      { hero: "Guinevere", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын бууралт −20% → −14% болсон." },
+      { hero: "Beatrix", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирол −6% болох шинэ бууруулалт орсон." },
+      { hero: "Aldous", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын бууралт −16% → −12% болсон." },
+      { hero: "Minotaur", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын нэмэгдэл +4% → +8% болсон." },
+      { hero: "Miya", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын +4% шинэ нэмэгдэл орсон." },
+      { hero: "Marcel", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын +4% шинэ нэмэгдэл орсон." },
+      { hero: "Edith", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын нэмэгдэл +2% → +4% болсон." },
+      { hero: "Irithel", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын +4% шинэ нэмэгдэл орсон." },
+      { hero: "Esmeralda", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирол −4% болох шинэ бууруулалт орсон." },
+      { hero: "Grock", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын бууралт −20% → −16% болсон." },
+      { hero: "Karrie", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирол −4% болох шинэ бууруулалт орсон." },
+      { hero: "Bruno", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "2-р чадварын Powerball газарт 2 → 3 сек үлдэнэ, хөдөлгөөнөөрөө буух зайг удирдаж, саатуулах нөлөөнд байсан ч (чимээгүй болгохоос бусад) ашиглаж болно. 1-р чадварын мана 60–85 → 50–75 болсон; ultimate-ийн тусгалын зай, манаргалт нэмэгдсэн." },
+      { hero: "Aulus", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Суурь довтолгооны хурд 0.88 → 1 болсон. Идэвхгүй чадварын хүчирхэг үндсэн довтолгоо HP нөхөж, удаашруулна; 2-р чадвар эхний цохилтоор 0.3 сек манаргаж, алдсан ч дараагийн цохилтоо ашиглах боломжтой." },
+      { hero: "Argus", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Идэвхгүй чадварт эхний шүүмжлэлт магадлал +30% нэмэгдсэн. 2-р чадвар дайсныг манаргаж, баатар оноход довтолгооны хурд нэмнэ. Ultimate-ийн суурь хохирол өсөж, үхлийн хохирол авахад бэлэн байвал автоматаар идэвхжих дархлаа нэмэгдсэн. Хөдөлгөөний хурд 240 → 260." },
+      { hero: "Aldous", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Бамбай авах үедээ 1 сек хөдөлгөөний хурд нэмнэ. 1-р чадвараар дайсны баатар руу ойртох хурд болон цуглуулах Soul Steal давхарга нэмэгдсэн." },
+      { hero: "Lukas", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Дайсанд цохилт өгөхөд цуглуулах Resolve 2 → 3.5 болсон. 1-р чадварын цохилтын суурь хохирол 220–520 → 280–580, HP нөхөлт 5% → 6% болсон. 2-р чадварын аянгын хохирол нэмэгдсэн." },
+      { hero: "Classic Akai", type: "buff", mode: "classic", modeLabel: "Зөвхөн Classic горим", change: "Идэвхгүй болон 2-р чадварын хохирол 2% → 3% HP болсон. Ultimate-ийн түлхэлтийн давтамж нэмэгдсэн." },
+      { hero: "Odette", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Ultimate-ээ ашиглаж байхдаа бага хурдтайгаар чөлөөтэй хөдөлж болно; өмнө нь байсан хоёр дахь идэвхжүүлэлт хасагдсан." },
+      { hero: "Sun", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Хувилан үүсгэх чадварын сэргэлт багасч, суурь хохирол өссөн. Ultimate-ийн удаашруулах нөлөө 20% → 25%, сэргэлт 6 → 5 сек болсон." },
+      { hero: "Marcel", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Ultimate-ийн Golden Hour байршил онилдог чадварыг цуцалж чадна." },
+      { hero: "Kalea", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын дээд суурь хохирол нэмэгдэж, сэргэлт 4 → 3.5 сек болсон. Идэвхгүй чадварын гурав дахь довтолгоо саатуулах нөлөөнд байсан ч ажиллана." },
+      { hero: "Kadita", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "Голын бүсэд хөдөлгөөний хурд 10% нэмэх шинэ идэвхгүй нөлөө авсан." },
+      { hero: "Hylos", type: "adjustment", mode: "main", modeLabel: "Үндсэн тоглолт · Идэвхгүй чадварын өөрчлөлт", change: "Илүү HP авахад мана өсөх шинэ харьцаа нэмэгдэж, тоноглолоос авсан мана бүрээр HP нэмдэг хуучин идэвхгүй нөлөө солигдсон. Patch тэмдэглэлд үүнийг цэвэр Nerf эсвэл Buff бус, өөрчлөлт гэж тэмдэглэсэн." },
+      { hero: "Cici", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын өндөр HP-тэй байнд учруулах хохирол 3–4.5% → 3.5–5% болж нэмэгдэв. Мангасын эсрэг хамгийн их хохирол болон ид шидийн соролт ч өссөн." },
+      { hero: "Alpha", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "2-р чадварын нэг байг оноход авах HP нөхөлт нэмэгдэж, олон бай оносон үеийн нөхөлтийн бууралтыг тохируулсан." },
+      { hero: "Kagura", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын шүхрийн хөдөлгөөний хурд явсан зайнаас хамаарч өсдөг шинэ нөлөө нэмэгдсэн." },
+      { hero: "Edith", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт · Холимог өөрчлөлт", change: "2-р чадвар, ultimate-ийн зарим хөдөлгөөнөөр хана нэвтрэх боломжтой. Нисэх үеийн хурд болон Phylax дотор чадвараар Wrath авах нөлөө нэмэгдсэн." },
+      { hero: "Karina", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын сэргэлт 7 → 6 сек болж богиноссон; хүчирхэгжүүлсэн үндсэн довтолгооны хохирол нэмэгдсэн." },
+      { hero: "Kaja", type: "buff", mode: "main", modeLabel: "Үндсэн тоглолт", change: "1-р чадварын сэргэлт 7 → 5.5 сек болсон. Нийт ид шидийн хүчний 45%-тай тэнцэх HP нөхөлт авна." },
+      { hero: "Tigreal", type: "buff", mode: "honor", modeLabel: "Зөвхөн Mythical Honor Battlefield", change: "2-р чадварын сэргэлт 16–13 → 13–10 сек болж богиноссон." },
+      { hero: "Chip", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын нэмэгдэл +4% → +6% болсон." },
+      { hero: "Granger", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын бууралт −4% → −2%; авах хохирлын бууралт −8% → −10% болсон." },
+      { hero: "X.Borg", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирол −4% болох шинэ бууралт орсон." },
+      { hero: "Pharsa", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын бууралт −6% → −2% болж багассан." },
+      { hero: "Kaja", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын нэмэгдэл +10% → +12%; авах хохирлын бууралт −10% → −12% болсон." },
+      { hero: "Joy", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын нэмэгдэл +8% → +10%; авах хохирлын бууралт −8% → −12% болсон." },
+      { hero: "Nolan", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын бууралт −16% → −20% болсон." },
+      { hero: "Harley", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын бууралт −6% → −14% болсон." },
+      { hero: "Uranus", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын нэмэгдэл +20% → +10% болж буурсан." },
+      { hero: "Kalea", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын нэмэгдэл +14% → +18%; авах хохирлын бууралт −8% → −12% болсон." },
+      { hero: "Hirara", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирлын бууралт −6% → −14% болсон." },
+      { hero: "Valentina", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Авах хохирол −10% болох шинэ бууралт орсон." },
+      { hero: "Zhuxin", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Учруулах хохирлын нэмэгдэл +10% → +16%; авах хохирлын бууралт −12% → −16% болсон." },
+      { hero: "Franco", type: "buff", mode: "brawl", modeLabel: "Зөвхөн Brawl", change: "Чадваруудын сэргэлтийн хугацааг их хэмжээгээр богиносгосон." }
+    ];
+    let patchMode = "all";
+    let patchType = "all";
+    function renderPatchUpdates() {
+      const query = document.getElementById("patchSearch").value.trim().toLowerCase();
+      const filtered = patchUpdates.filter(item =>
+        (patchMode === "all" || item.mode === patchMode) &&
+        (patchType === "all" || (item.type || "nerf") === patchType) &&
+        `${item.hero} ${item.modeLabel} ${item.change}`.toLowerCase().includes(query)
+      );
+      document.getElementById("patchBalanceList").innerHTML = filtered.length
+        ? filtered.map(item => `
+          <article class="card patch-entry">
+            <h3>${item.hero}</h3>
+            <span class="patch-kind ${(item.type || "nerf") === "buff" ? "buff" : (item.type || "nerf") === "adjustment" ? "adjustment" : ""}">${(item.type || "nerf") === "buff" ? "Buff" : (item.type || "nerf") === "adjustment" ? "Өөрчлөлт" : "Nerf"}</span>
+            <div class="patch-mode">${item.modeLabel}</div>
+            <time datetime="2026-09-16">2026.09.16 · Patch 2.2.16</time>
+            <p class="patch-change">${item.change}</p>
+          </article>
+        `).join("")
+        : `<div class="empty-state">Ийм баатар, өөрчлөлт олдсонгүй.</div>`;
+      document.getElementById("patchCount").textContent = `${filtered.length} өөрчлөлт`;
+    }
+    document.getElementById("patchSearch").addEventListener("input", renderPatchUpdates);
+    document.querySelectorAll("[data-patch-type]").forEach(button => {
+      button.addEventListener("click", () => {
+        patchType = button.dataset.patchType;
+        document.querySelectorAll("[data-patch-type]").forEach(typeButton => {
+          typeButton.setAttribute("aria-pressed", String(typeButton === button));
+        });
+        renderPatchUpdates();
+      });
+    });
+    document.querySelectorAll("[data-patch-filter]").forEach(button => {
+      button.addEventListener("click", () => {
+        patchMode = button.dataset.patchFilter;
+        document.querySelectorAll("[data-patch-filter]").forEach(filterButton => {
+          filterButton.setAttribute("aria-pressed", String(filterButton === button));
+        });
+        renderPatchUpdates();
+      });
+    });
+
+    // ===== Зөвлөгөө =====
+    const tips = [
+      "Газрын зургаа тогтмол хар: дайсан харагдахгүй бол замаа түлхэхээсээ өмнө болгоомжил.",
+      "Том мангас гарах гэж байвал эртхэн багтайгаа цуглаж, орчныг нь хяналтдаа ав.",
+      "Цамхгийн дор хамгаалж байгаа үедээ дайсныг хөөж аюултай газар бүү ор.",
+      "Жижиг цэргийг хамгийн сүүлд цохиж алт авахаа дадал болго.",
+      "Дайсны чадваруудыг ашигласны дараа довтлох боломж гардаг.",
+      "Багийн тулаанд эхлээд амархан хүрэх байг онил; хамгаалагчийн хажуугаар хүчээр бүү зүтгэ.",
+      "Буцахад ичих хэрэггүй: бага амьтай үедээ амьд үлдэж, дараагийн тулаанд тусал.",
+      "Нэг цамхаг авах боломж заримдаа шаардлагагүй тулаанаас илүү үнэ цэнтэй.",
+      "Багийнхаа хамгаалагчдаас хэт холдохгүй бай; тэд чамд аюулгүй байрлал гаргана.",
+      "Үхсэн бүрийнхээ дараа газрын зураг, байрлал, ашиглаагүй чадвараа эргэцүүл.",
+      "Дайсан алга болбол багтаа дохио өг. Богинохон анхааруулга ч амь аварч болно.",
+      "Эхний үед алт, туршлагаа дэмий алдахгүй цуглуул; хүчтэй үеэ хүлээ.",
+      "Бут сөөг рүү орохын өмнө хамтрагчтайгаа шалга. Дайсан отож байж болно.",
+      "Дайсны хяналтын чадвар ашиглагдсаны дараа аюулгүй дайралтын цонх нээгдэнэ.",
+      "Ширэнгийн тоглогчийн зорилтыг булаахын оронд багтаа хамгаалж өгөөрэй.",
+      "Баг тулаан эхлэхээс өмнө өөрийн гарах зам, аюулгүй байрлалыг бод.",
+      "Дайсны харваач эсвэл илбэчин ганцаар явж байвал багтайгаа зохицуулж барь.",
+      "Хэт олон дайсан харагдахгүй байвал ганцаараа замын гүн рүү бүү түлх.",
+      "Эд зүйлээ дайсны бүрэлдэхүүнд тааруул; үргэлж нэг ижил сонголт зөв байдаггүй.",
+      "Ялах нөхцөлөө сана: цамхаг, том мангас, бааз руу ахиц гаргах нь чухал.",
+      "Ур чадвараа хоосон ашиглахын оронд дайсны хөдөлгөөн, байрлалыг урьдчилан таамагла.",
+      "Дайсныг хөөхөөсөө өмнө өөрийн амь, чадварын сэргэлт, багийн байршлаа шалга.",
+      "Тусалж очихдоо замынхаа хамгаалалтыг орхиж байгаа эсэхээ бод.",
+      "Тоглолтын төгсгөлд ганцаараа баригдах нь том зорилтоо алдахад хүргэж болзошгүй.",
+      "Багийнхантайгаа тайван харилц. Буруутгахаас илүү дараагийн алхмаа товч хэл.",
+      "Дайсны баазыг онилохын өмнө ойр хавийн дайсан болон цэргүүдээ шалга.",
+      "Саатуулах чадвартай баатраа багийн гол довтолгоотойгоо уялдуул.",
+      "Бага амьтай дайсныг хөөхдөө цамхаг, бут, ирж буй дайснуудыг анзаараарай.",
+      "Үүрэгтээ тохируулан тогло: харваач алт цуглуулж, хамгаалагч хамтрагчаа хамгаална.",
+      "Тоглолт бүрээс нэг зүйл сурч, дараагийн удаа зориуд давтаж үз."
+    ];
+    let lastTipIndex = -1;
+    function showTip() {
+      let i = Math.floor(Math.random() * tips.length);
+      if (tips.length > 1) {
+        while (i === lastTipIndex) i = Math.floor(Math.random() * tips.length);
+      }
+      lastTipIndex = i;
+      const tip = document.getElementById("tip");
+      tip.classList.remove("tip-change");
+      void tip.offsetWidth;
+      tip.textContent = tips[i];
+      tip.classList.add("tip-change");
+    }
+
+    // ===== Хуудас ачаалахад эхлүүлэх =====
+    renderGlossary();
+    filterHeroes("all");
+    updateFavoritesCount();
+    renderSpotlight();
+    buildMatchPlan();
+    renderPatchUpdates();
+    setInterval(updateSpotlight, 9000);
+    const scrollProgress = document.getElementById("scrollProgress");
+    function updateScrollUI() {
+      const topBtn = document.getElementById("topBtn");
+      if (topBtn) topBtn.style.display = window.scrollY > 400 ? "block" : "none";
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollProgress) scrollProgress.style.width = `${scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0}%`;
+    }
+    window.addEventListener("scroll", updateScrollUI, { passive: true });
+    window.addEventListener("resize", updateScrollUI);
+    updateScrollUI();
+    if ("IntersectionObserver" in window) {
+      const sectionLinks = [...document.querySelectorAll("nav a[href^='#']")];
+      const sectionObserver = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          sectionLinks.forEach(link => {
+            if (link.getAttribute("href") === `#${entry.target.id}`) link.setAttribute("aria-current", "location");
+            else link.removeAttribute("aria-current");
+          });
+        }
+      }, { rootMargin: "-30% 0px -60% 0px" });
+      document.querySelectorAll("section[id]").forEach(section => sectionObserver.observe(section));
+    }
+    document.addEventListener("keydown", event => {
+      if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
+        event.preventDefault();
+        document.getElementById("heroSearch").focus();
+      }
+      if (event.key === "Escape" && document.activeElement.id === "heroSearch") {
+        document.getElementById("heroSearch").value = "";
+        filterHeroes(currentRole);
+      }
+    });
+
+    // Зөвлөгөө зөвхөн хуудас харагдаж байх үед солигдоно
+    showTip();
+    setInterval(() => {
+      if (!document.hidden) showTip();
+    }, 12000);
+  </script>
+
+</body>
+</html>
